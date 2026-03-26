@@ -1,0 +1,59 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+
+interface LazyImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  placeholder?: string;
+}
+
+export default function LazyImage({
+  src,
+  alt,
+  className = "",
+  placeholder,
+}: LazyImageProps) {
+  const [loaded, setLoaded] = useState(false);
+  const [inView, setInView] = useState(false);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={imgRef} className={`relative ${className}`}>
+      {(!loaded || !inView) && (
+        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
+          {placeholder || (
+            <span className="text-gray-400">加载中...</span>
+          )}
+        </div>
+      )}
+      {inView && (
+        <img
+          src={src}
+          alt={alt}
+          onLoad={() => setLoaded(true)}
+          className={`${loaded ? "opacity-100" : "opacity-0"} transition-opacity`}
+        />
+      )}
+    </div>
+  );
+}

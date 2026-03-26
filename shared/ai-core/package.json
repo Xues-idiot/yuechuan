@@ -1,0 +1,9 @@
+{
+  "name": "@yuechuan/ai-core",
+  "version": "0.1.0",
+  "description": "Shared AI capabilities for YueChuan",
+  "main": "index.ts",
+  "dependencies": {
+    "openai": "^1.30.1"
+  }
+}
