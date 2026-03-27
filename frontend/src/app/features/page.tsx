@@ -22,25 +22,25 @@ export default function NewFeaturesPage() {
             icon="📁"
             title="Custom Categories"
             description="Organize feeds with custom categories"
-            api="/categories"
+            page="/categories"
           />
           <FeatureCard
             icon="🏆"
             title="Achievements"
             description="Complete reading challenges and unlock badges"
-            api="/achievements"
+            page="/achievements"
           />
           <FeatureCard
             icon="⚡"
             title="Reading Speed"
             description="Track your reading speed and efficiency"
-            api="/reading-speed"
+            page="/reading-speed"
           />
           <FeatureCard
             icon="🔍"
             title="Smart Filters"
             description="AI-powered content filtering"
-            api="/smart-filters"
+            page="/smart-filters"
           />
           <FeatureCard
             icon="⏰"
@@ -58,31 +58,31 @@ export default function NewFeaturesPage() {
             icon="📊"
             title="Weekly Digest"
             description="Weekly reading summary and trends"
-            api="/weekly-digest"
+            page="/weekly-digest"
           />
           <FeatureCard
             icon="🎯"
             title="Focus Mode"
             description="Distraction-free reading experience"
-            api="/focus-mode"
+            page="/focus-mode"
           />
           <FeatureCard
             icon="💾"
             title="Backup"
             description="Export and import your reading data"
-            api="/backup"
+            page="/backup"
           />
           <FeatureCard
             icon="🔑"
             title="API Keys"
             description="Manage third-party access"
-            api="/api-keys"
+            page="/api-keys"
           />
           <FeatureCard
             icon="📤"
             title="Reading List"
             description="Import/export reading lists"
-            api="/reading-list"
+            page="/reading-list"
           />
           <FeatureCard
             icon="✏️"
@@ -94,31 +94,31 @@ export default function NewFeaturesPage() {
             icon="🔄"
             title="Smart Sort"
             description="AI-powered content sorting"
-            api="/smart-sort"
+            page="/smart-sort"
           />
           <FeatureCard
             icon="📦"
             title="Pocket Integration"
             description="Sync with Pocket/Instapaper"
-            api="/integrations/pocket"
+            page="/integrations/pocket"
           />
           <FeatureCard
             icon="🔊"
             title="Audio Playback"
             description="Text-to-speech article reading"
-            api="/audio"
+            page="/audio"
           />
           <FeatureCard
             icon="📈"
             title="Reading Timeline"
             description="Visual timeline of your reading history"
-            api="/reading-timeline"
+            page="/reading-timeline"
           />
           <FeatureCard
             icon="🔎"
             title="Advanced Search"
             description="Search with filters and suggestions"
-            api="/search/advanced"
+            page="/search"
           />
           <FeatureCard
             icon="📋"
@@ -142,13 +142,13 @@ export default function NewFeaturesPage() {
             icon="📄"
             title="PDF/HTML Export"
             description="Export articles to various formats"
-            api="/export/pdf"
+            page="/export/pdf"
           />
           <FeatureCard
             icon="📱"
             title="Feed Recommendations"
             description="Discover new feeds based on interests"
-            api="/recommendations"
+            page="/recommendations"
           />
           <FeatureCard
             icon="⌨️"
@@ -160,19 +160,19 @@ export default function NewFeaturesPage() {
             icon="🔔"
             title="Notification Settings"
             description="Configure notification preferences"
-            api="/notification-settings"
+            page="/notifications"
           />
           <FeatureCard
             icon="📈"
             title="Analytics Dashboard"
             description="Detailed reading analytics and insights"
-            api="/analytics"
+            page="/analytics"
           />
           <FeatureCard
             icon="📊"
             title="Advanced Analytics"
             description="Deep analysis with insights and suggestions"
-            api="/advanced-analytics"
+            page="/advanced-analytics"
           />
           <FeatureCard
             icon="⚡"
@@ -202,7 +202,7 @@ export default function NewFeaturesPage() {
             icon="🔧"
             title="Parser Rules"
             description="Custom RSS parsing rules"
-            api="/parser-rules"
+            page="/parser-rules"
           />
         </div>
 
