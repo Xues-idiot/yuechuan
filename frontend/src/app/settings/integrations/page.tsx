@@ -47,14 +47,6 @@ export default function SettingsIntegrationsPage() {
       connected: false,
       configured: false
     },
-    {
-      id: "notion",
-      name: "Notion",
-      icon: "📓",
-      description: "导出阅读笔记到 Notion",
-      connected: false,
-      configured: false
-    }
   ]);
 
   const toggleIntegration = (id: string) => {
