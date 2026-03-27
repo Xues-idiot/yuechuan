@@ -1,43 +1,68 @@
 "use client";
 
+import { useState, useMemo } from "react";
+
 interface TagCloudProps {
-  tags: Array<{ name: string; count: number }>;
+  tags: string[];
   onTagClick?: (tag: string) => void;
-  maxTags?: number;
 }
 
-export default function TagCloud({ tags, onTagClick, maxTags = 50 }: TagCloudProps) {
-  const sortedTags = [...tags].sort((a, b) => b.count - a.count).slice(0, maxTags);
-  const maxCount = Math.max(...sortedTags.map((t) => t.count), 1);
+export default function TagCloud({ tags, onTagClick }: TagCloudProps) {
+  const [selected, setSelected] = useState<string | null>(null);
 
-  const getFontSize = (count: number) => {
-    const ratio = count / maxCount;
-    if (ratio > 0.8) return "text-lg";
-    if (ratio > 0.6) return "text-base";
-    if (ratio > 0.4) return "text-sm";
-    return "text-xs";
-  };
+  // 统计标签频率
+  const tagCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    tags.forEach((tag) => {
+      counts[tag] = (counts[tag] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 20);
+  }, [tags]);
 
-  const getColor = (count: number) => {
-    const ratio = count / maxCount;
-    if (ratio > 0.8) return "text-blue-600 dark:text-blue-400";
-    if (ratio > 0.6) return "text-green-600 dark:text-green-400";
-    if (ratio > 0.4) return "text-yellow-600 dark:text-yellow-400";
-    return "text-gray-500 dark:text-gray-400";
-  };
+  function getFontSize(count: number, max: number) {
+    const min = 12;
+    const maxSize = 24;
+    return min + ((count / max) * (maxSize - min));
+  }
+
+  function getColor(count: number, max: number) {
+    if (count >= max * 0.7) return "text-red-500";
+    if (count >= max * 0.4) return "text-orange-500";
+    if (count >= max * 0.2) return "text-yellow-500";
+    return "text-gray-500";
+  }
+
+  if (tagCounts.length === 0) {
+    return null;
+  }
+
+  const maxCount = tagCounts[0][1];
 
   return (
-    <div className="flex flex-wrap gap-2 items-center justify-center">
-      {sortedTags.map((tag) => (
-        <button
-          key={tag.name}
-          onClick={() => onTagClick?.(tag.name)}
-          className={`${getFontSize(tag.count)} ${getColor(tag.count)} hover:underline`}
-        >
-          #{tag.name}
-          <span className="ml-1 text-xs opacity-60">({tag.count})</span>
-        </button>
-      ))}
+    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
+      <h3 className="font-semibold mb-3">🏷️ 标签云</h3>
+      <div className="flex flex-wrap gap-2">
+        {tagCounts.map(([tag, count]) => (
+          <button
+            key={tag}
+            onClick={() => {
+              setSelected(selected === tag ? null : tag);
+              onTagClick?.(tag);
+            }}
+            className={`hover:opacity-80 transition-opacity ${
+              selected === tag ? "ring-2 ring-blue-500 rounded" : ""
+            }`}
+            style={{
+              fontSize: `${getFontSize(count, maxCount)}px`,
+            }}
+          >
+            <span className={getColor(count, maxCount)}>{tag}</span>
+            <span className="text-xs text-gray-400 ml-1">({count})</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

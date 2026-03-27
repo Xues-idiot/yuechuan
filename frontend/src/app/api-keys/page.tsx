@@ -62,7 +62,7 @@ export default function ApiKeysPage() {
     <main className="min-h-screen p-8">
       <div className="max-w-3xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">🔑 API Keys</h1>
+          <h1 className="text-4xl font-bold mb-2">🔑 API 密钥</h1>
           <p className="text-gray-600 dark:text-gray-400">
             管理第三方应用访问密钥
           </p>

@@ -12,8 +12,8 @@ const QUICK_ADD_TEMPLATES = [
   },
   {
     platform: "bilibili",
-    name: "AI太chants",
-    url: "AI太chants",
+    name: "AI前沿",
+    url: "bilibili-ai",
     description: "B站AIUP主",
   },
   {

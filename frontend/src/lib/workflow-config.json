@@ -1,0 +1,17 @@
+{
+  "defaultBranch": "main",
+  "autoCommit": false,
+  "autoPush": false,
+  "scanPatterns": ["**/*.{ts,tsx,js,jsx}"],
+  "ignoreDirs": ["node_modules", ".next", "dist", ".git"],
+  "maxCommitMessageLength": 100,
+  "enableLintCheck": true,
+  "enableBackup": true,
+  "backupRetentionDays": 7,
+  "autoFix": false,
+  "enableNotifications": false,
+  "notificationChannels": [],
+  "emailRecipients": [],
+  "enableReport": true,
+  "enableGitHubPR": false
+}

@@ -326,8 +326,8 @@ export const api = {
     });
 
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ detail: "Transcription failed" }));
-      throw new ApiError(errorData.detail || "Transcription failed", res.status);
+      const errorData = await res.json().catch(() => ({ detail: "转录失败" }));
+      throw new ApiError(errorData.detail || "转录失败", res.status);
     }
 
     return res.json();

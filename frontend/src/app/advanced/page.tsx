@@ -10,9 +10,9 @@ export default function AdvancedPage() {
     <main className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Advanced Features</h1>
+          <h1 className="text-4xl font-bold mb-2">高级功能</h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Enhanced reading experience and search
+            增强的阅读体验和搜索
           </p>
         </header>
 
@@ -25,7 +25,7 @@ export default function AdvancedPage() {
                 : "border-transparent"
             }`}
           >
-            Advanced Search
+            高级搜索
           </button>
           <button
             onClick={() => setActiveTab("reading")}
@@ -35,7 +35,7 @@ export default function AdvancedPage() {
                 : "border-transparent"
             }`}
           >
-            Reading Mode
+            阅读模式
           </button>
           <button
             onClick={() => setActiveTab("batch")}
@@ -45,22 +45,22 @@ export default function AdvancedPage() {
                 : "border-transparent"
             }`}
           >
-            Batch Operations
+            批量操作
           </button>
         </div>
 
         {activeTab === "search" && <AdvancedSearch />}
         {activeTab === "reading" && (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-            <h3 className="font-semibold mb-4">Reading Mode Settings</h3>
-            <p className="text-gray-500">Configure your reading experience</p>
+            <h3 className="font-semibold mb-4">阅读模式设置</h3>
+            <p className="text-gray-500">配置您的阅读体验</p>
           </div>
         )}
         {activeTab === "batch" && (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-            <h3 className="font-semibold mb-4">Batch Operations</h3>
+            <h3 className="font-semibold mb-4">批量操作</h3>
             <p className="text-gray-500">
-              Select multiple items to perform batch operations
+              选择多个项目执行批量操作
             </p>
           </div>
         )}

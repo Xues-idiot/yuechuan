@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 interface ToggleProps {
   checked: boolean;
   onChange: (checked: boolean) => void;

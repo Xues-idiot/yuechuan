@@ -28,7 +28,7 @@ export default function WeeklyDigestPage() {
     setError(null);
     try {
       const res = await fetch(`${API_BASE}/weekly-digest`);
-      if (!res.ok) throw new Error("Failed to load digest");
+      if (!res.ok) throw new Error("加载摘要失败");
       const data = await res.json();
       setDigest(data);
     } catch (err) {

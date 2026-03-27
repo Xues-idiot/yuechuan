@@ -51,23 +51,23 @@ async def get_reading_mode_preview():
     """获取阅读模式预览配置"""
     return {
         "fonts": [
-            {"value": "system-ui", "label": "System Default"},
+            {"value": "system-ui", "label": "系统默认"},
             {"value": "Georgia", "label": "Georgia"},
             {"value": "Merriweather", "label": "Merriweather"},
             {"value": "Palatino", "label": "Palatino"},
             {"value": "Helvetica Neue", "label": "Helvetica Neue"}
         ],
         "themes": [
-            {"value": "light", "label": "Light", "bg": "#ffffff", "text": "#333333"},
-            {"value": "dark", "label": "Dark", "bg": "#1a1a1a", "text": "#e0e0e0"},
-            {"value": "sepia", "label": "Sepia", "bg": "#f4ecd8", "text": "#5b4636"}
+            {"value": "light", "label": "浅色", "bg": "#ffffff", "text": "#333333"},
+            {"value": "dark", "label": "深色", "bg": "#1a1a1a", "text": "#e0e0e0"},
+            {"value": "sepia", "label": "护眼", "bg": "#f4ecd8", "text": "#5b4636"}
         ],
         "sizes": [14, 16, 18, 20, 22, 24],
         "line_heights": [1.4, 1.6, 1.8, 2.0, 2.2],
         "widths": [
-            {"value": "narrow", "label": "Narrow", "max_width": "600px"},
-            {"value": "normal", "label": "Normal", "max_width": "720px"},
-            {"value": "wide", "label": "Wide", "max_width": "900px"},
-            {"value": "full", "label": "Full Width", "max_width": "100%"}
+            {"value": "narrow", "label": "窄", "max_width": "600px"},
+            {"value": "normal", "label": "正常", "max_width": "720px"},
+            {"value": "wide", "label": "宽", "max_width": "900px"},
+            {"value": "full", "label": "全宽", "max_width": "100%"}
         ]
     }
