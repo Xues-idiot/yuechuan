@@ -347,6 +347,12 @@
 - [x] 解析规则页面 (`/parser-rules`)
   - 预设规则
   - 规则测试
+- [x] 设置子页面
+  - `/settings/api` - API配置
+  - `/settings/appearance` - 外观设置
+  - `/settings/about` - 关于页面
+  - `/settings/integrations` - 第三方集成
+- [x] 键盘快捷键帮助页 (`/keyboard-shortcuts`)
 
 ### 新增功能 (迭代61-70)
 - [x] 通知系统后端 API
