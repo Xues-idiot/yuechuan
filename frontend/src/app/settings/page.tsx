@@ -52,6 +52,20 @@ export default function SettingsPage() {
           </Link>
 
           <Link
+            href="/settings/integrations"
+            className="block p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-500 transition-colors"
+          >
+            <div className="flex items-center gap-4">
+              <span className="text-3xl">🔗</span>
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold">第三方集成</h2>
+                <p className="text-sm text-gray-500">Notion、Pocket、Instapaper 等</p>
+              </div>
+              <span className="text-gray-400">→</span>
+            </div>
+          </Link>
+
+          <Link
             href="/data"
             className="block p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-500 transition-colors"
           >
