@@ -184,11 +184,12 @@ export default function FeedsPage() {
               </button>
             )}
             <button
-            onClick={() => setShowAdd(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
-            添加订阅源
-          </button>
+              onClick={() => setShowAdd(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              添加订阅源
+            </button>
+          </div>
         </header>
 
         {error && (

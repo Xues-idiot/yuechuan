@@ -95,6 +95,8 @@ export interface FilterRule {
 interface RequestOptions {
   headers?: Record<string, string>;
   signal?: AbortSignal;
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  body?: string;
 }
 
 async function request<T>(
@@ -102,6 +104,7 @@ async function request<T>(
   options: RequestOptions = {}
 ): Promise<T> {
   const res = await fetch(url, {
+    method: options.method || "GET",
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -772,6 +775,10 @@ export const api = {
     });
   },
 
+  async getReadingModePreview(): Promise<ReadingModePreview> {
+    return request(`${API_BASE}/reading-mode/preview`);
+  },
+
   // Keyboard Shortcuts
   async getKeyboardShortcuts(): Promise<Array<{
     key: string;
@@ -794,34 +801,6 @@ export const api = {
   },
 
   // Notification Settings
-  async getNotificationSettings(): Promise<{
-    enabled: boolean;
-    review_reminders: boolean;
-    new_items: boolean;
-    feed_updates: boolean;
-    weekly_digest: boolean;
-    achievements: boolean;
-    desktop_notifications: boolean;
-    notification_sound: boolean;
-  }> {
-    return request(`${API_BASE}/notification-settings`);
-  },
-
-  async updateNotificationSettings(settings: {
-    enabled?: boolean;
-    review_reminders?: boolean;
-    new_items?: boolean;
-    feed_updates?: boolean;
-    weekly_digest?: boolean;
-    achievements?: boolean;
-    desktop_notifications?: boolean;
-    notification_sound?: boolean;
-  }): Promise<{ success: boolean }> {
-    return request(`${API_BASE}/notification-settings`, {
-      method: "PUT",
-      body: JSON.stringify(settings),
-    });
-  },
 
   // Dashboard Widgets
   async getDashboardData(): Promise<{
@@ -970,19 +949,4 @@ export const api = {
     return request(`${API_BASE}/advanced-analytics/topic-analysis`);
   },
 
-  // Reading Mode Settings
-  async getReadingModeSettings(): Promise<ReadingModeSettings> {
-    return request<ReadingModeSettings>(`${API_BASE}/reading-mode/settings`);
-  },
-
-  async updateReadingModeSettings(settings: ReadingModeSettings): Promise<{ success: boolean }> {
-    return request(`${API_BASE}/reading-mode/settings`, {
-      method: "PUT",
-      body: JSON.stringify(settings),
-    });
-  },
-
-  async getReadingModePreview(): Promise<ReadingModePreview> {
-    return request<ReadingModePreview>(`${API_BASE}/reading-mode/preview`);
-  },
 };

@@ -138,15 +138,10 @@ export function useKeyboardShortcuts(
   }, [shortcuts]);
 }
 
-export function use阅读时长估算(content: string) {
-  const [estimatedMinutes, setEstimatedMinutes] = useState(1);
-
-  useEffect(() => {
-    const chineseChars = (content.match(/[\u4e00-\u9fff]/g) || []).length;
-    const englishWords = (content.match(/[a-zA-Z]+/g) || []).length;
-    const totalMinutes = chineseChars / 400 + englishWords / 200;
-    setEstimatedMinutes(Math.max(1, Math.ceil(totalMinutes)));
-  }, [content]);
-
-  return estimatedMinutes;
+// 估算阅读时长（不作为hook使用）
+export function getEstimatedReadingTime(content: string): number {
+  const chineseChars = (content.match(/[\u4e00-\u9fff]/g) || []).length;
+  const englishWords = (content.match(/[a-zA-Z]+/g) || []).length;
+  const totalMinutes = chineseChars / 400 + englishWords / 200;
+  return Math.max(1, Math.ceil(totalMinutes));
 }

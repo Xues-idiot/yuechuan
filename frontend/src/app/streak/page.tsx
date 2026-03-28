@@ -219,17 +219,17 @@ export default function StreakPage() {
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-lg">今日进度</h2>
-            <span className={`px-3 py-1 rounded-full text-sm ${streakData?.today_read >= streakData!.today_goal ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : "bg-gray-100 text-gray-600 dark:bg-gray-700"}`}>
+            <span className={`px-3 py-1 rounded-full text-sm ${(streakData?.today_read || 0) >= (streakData?.today_goal || 0) ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : "bg-gray-100 text-gray-600 dark:bg-gray-700"}`}>
               {streakData?.today_read} / {streakData?.today_goal} 篇
             </span>
           </div>
           <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-500 ${streakData?.today_read >= streakData!.today_goal ? "bg-green-500" : "bg-blue-500"}`}
+              className={`h-full rounded-full transition-all duration-500 ${(streakData?.today_read || 0) >= (streakData?.today_goal || 0) ? "bg-green-500" : "bg-blue-500"}`}
               style={{ width: `${Math.min(((streakData?.today_read || 0) / (streakData?.today_goal || 10)) * 100, 100)}%` }}
             />
           </div>
-          {streakData?.today_read >= streakData!.today_goal && (
+          {(streakData?.today_read || 0) >= (streakData?.today_goal || 0) && (
             <p className="text-center text-green-500 mt-2 font-medium">🎉 今日目标已达成！</p>
           )}
         </div>

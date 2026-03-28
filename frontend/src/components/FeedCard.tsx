@@ -17,9 +17,12 @@ interface FeedCardProps {
   };
   onRefresh?: () => void;
   onDelete?: () => void;
+  onClick?: () => void;
+  isRefreshing?: boolean;
+  isSelected?: boolean;
 }
 
-export default function FeedCard({ feed, onRefresh, onDelete }: FeedCardProps) {
+export default function FeedCard({ feed, onRefresh, onDelete, onClick, isRefreshing, isSelected }: FeedCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const platformIcons: Record<string, string> = {
@@ -31,7 +34,12 @@ export default function FeedCard({ feed, onRefresh, onDelete }: FeedCardProps) {
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-500 transition-colors">
+    <div
+      className={`p-4 bg-white dark:bg-gray-800 rounded-lg border transition-colors cursor-pointer ${
+        isSelected ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border-gray-200 dark:border-gray-700 hover:border-blue-500"
+      } ${isRefreshing ? "opacity-50" : ""}`}
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between">
         <Link href={`/feeds/${feed.id}`} className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">

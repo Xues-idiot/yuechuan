@@ -109,7 +109,7 @@ export default function FeedDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   async function handleMarkAllRead() {
-    if (unreadCount === 0) return;
+    if (unreadCount === 0 || !feed) return;
     if (!confirm(`确定将 "${feed.name}" 的 ${unreadCount} 篇内容全部标记为已读吗？`)) return;
     try {
       await api.markAllAsRead(feedId);

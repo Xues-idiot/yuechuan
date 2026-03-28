@@ -31,7 +31,7 @@ export default function FeedStatsPanel() {
             name: feed.name,
             itemCount: items.length,
             unreadCount: items.filter((i) => !i.is_read).length,
-            lastFetched: feed.last_fetched_at,
+            lastFetched: feed.last_fetched_at || null,
           };
         } catch {
           return {
@@ -39,7 +39,7 @@ export default function FeedStatsPanel() {
             name: feed.name,
             itemCount: 0,
             unreadCount: 0,
-            lastFetched: feed.last_fetched_at,
+            lastFetched: feed.last_fetched_at || null,
           };
         }
       });

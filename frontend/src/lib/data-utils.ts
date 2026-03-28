@@ -48,9 +48,9 @@ export function chunk<T>(array: T[], size: number): T[][] {
 }
 
 export function flatten<T>(array: (T | T[])[]): T[] {
-  return array.reduce((acc, val) => {
+  return array.reduce<T[]>((acc, val) => {
     return Array.isArray(val) ? acc.concat(flatten(val)) : acc.concat(val);
-  }, [] as T[]);
+  }, []);
 }
 
 export function intersection<T>(a: T[], b: T[]): T[] {

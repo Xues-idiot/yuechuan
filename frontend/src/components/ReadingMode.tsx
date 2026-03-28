@@ -27,7 +27,7 @@ export default function ReadingModePage() {
   const loadSettings = async () => {
     try {
       const data = await api.getReadingModeSettings();
-      setSettings(data);
+      setSettings(data as ReadingModeSettings);
     } catch (error) {
       console.error("加载设置失败", error);
     }

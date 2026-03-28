@@ -119,7 +119,7 @@ export default function QuickAdd({ isOpen, onClose, onSuccess }: QuickAddProps) 
         <Select
           label="订阅源类型"
           value={feedType}
-          onChange={(e) => setFeedType(e.target.value)}
+          onChange={(value) => setFeedType(value)}
           options={FEED_TYPES}
         />
 

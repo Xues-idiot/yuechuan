@@ -35,15 +35,9 @@ export default function ReviewPage() {
           if (existing) {
             // 使用服务器的数据更新本地间隔重复记录
             const { ease_factor, interval, next_review } = serverItem;
-            const items = getReviewItems();
-            const item = items.find((i) => i.item_id === serverItem.item.id);
-            if (item) {
-              item.ease_factor = ease_factor;
-              item.interval = interval;
-              item.next_review = next_review;
-              // 保持本地的复习次数和笔记
-              saveReviewItems(items);
-            }
+            existing.ease_factor = ease_factor;
+            existing.interval = interval;
+            existing.next_review = next_review;
           }
         });
       }
@@ -96,7 +90,7 @@ export default function ReviewPage() {
     setStats(getReviewStats());
   }
 
-  function handleKeyDown(e: KeyboardEvent) {
+  function handleKeyDown(e: React.KeyboardEvent) {
     if (!showAnswer) {
       if (e.key === " " || e.key === "Enter") {
         e.preventDefault();

@@ -18,6 +18,7 @@ interface FocusSession {
   started_at: string;
   duration_minutes: number;
   item_id: number | null;
+  paused?: boolean;
 }
 
 export default function FocusModePage() {

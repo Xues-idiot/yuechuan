@@ -5,6 +5,8 @@ interface ToggleProps {
   onChange: (checked: boolean) => void;
   disabled?: boolean;
   size?: "sm" | "md" | "lg";
+  label?: string;
+  description?: string;
 }
 
 export default function Toggle({
@@ -12,6 +14,8 @@ export default function Toggle({
   onChange,
   disabled = false,
   size = "md",
+  label,
+  description,
 }: ToggleProps) {
   const sizes = {
     sm: { track: "w-8 h-4", thumb: "w-3 h-3", translate: "translate-x-4" },
@@ -20,7 +24,8 @@ export default function Toggle({
   };
 
   return (
-    <button
+    <div className="flex items-start gap-3">
+      <button
       type="button"
       role="switch"
       aria-checked={checked}
@@ -39,6 +44,13 @@ export default function Toggle({
           sizes[size].thumb
         }`}
       />
-    </button>
+      </button>
+      {(label || description) && (
+        <div className="flex-1">
+          {label && <div className="font-medium">{label}</div>}
+          {description && <div className="text-sm text-gray-500">{description}</div>}
+        </div>
+      )}
+    </div>
   );
 }
