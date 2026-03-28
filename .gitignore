@@ -11,6 +11,9 @@ build/
 .next/
 out/
 
+# TypeScript
+*.tsbuildinfo
+
 # IDE
 .vscode/
 .idea/
