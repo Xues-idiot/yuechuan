@@ -11,6 +11,7 @@ import {
   ReviewResult,
 } from "@/lib/spaced-repetition";
 import ThemeToggle from "@/components/ThemeToggle";
+import { CheckCircleIcon, SparklesIcon, PencilIcon, ArrowRightIcon } from "lucide-react";
 
 export default function ReviewPage() {
   const [dueItems, setDueItems] = useState<ReviewItem[]>([]);
@@ -19,6 +20,11 @@ export default function ReviewPage() {
   const [stats, setStats] = useState({ total: 0, due: 0, reviewed_today: 0 });
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 从服务器同步复习数据
   const syncFromServer = useCallback(async () => {
@@ -113,67 +119,72 @@ export default function ReviewPage() {
     return (
       <main className="min-h-screen p-8">
         <div className="max-w-2xl mx-auto">
-          <p className="text-gray-500">加载中...</p>
+          <p style={{ color: 'var(--text-secondary)' }}>加载中...</p>
         </div>
       </main>
     );
   }
 
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <main className="min-h-screen p-8" onKeyDown={handleKeyDown}>
+    <main className="min-h-screen p-8" onKeyDown={handleKeyDown} tabIndex={-1} style={{ backgroundColor: 'var(--background)' }}>
       <div className="max-w-2xl mx-auto">
         <header className="mb-8 flex items-start justify-between">
           <div>
-            <Link href="/" className="text-sm text-gray-500 hover:text-blue-500 mb-2 block">
-              ← 返回
+            <Link href="/" className="text-sm mb-2 block flex items-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+              <ArrowRightIcon className="w-4 h-4 rotate-180" aria-hidden="true" />
+              返回
             </Link>
-            <h1 className="text-2xl font-bold">🧠 间隔复习</h1>
-            <p className="text-gray-500 mt-1">基于间隔重复算法巩固记忆</p>
+            <h1 className="text-2xl font-bold font-serif" style={{ color: 'var(--text-primary)' }}>间隔复习</h1>
+            <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>基于间隔重复算法巩固记忆</p>
           </div>
           <div className="flex items-center gap-3">
-            {syncing && <span className="text-sm text-gray-400">同步中...</span>}
+            {syncing && <span className="text-sm" style={{ color: 'var(--text-tertiary)' }}>同步中...</span>}
             <ThemeToggle />
           </div>
         </header>
 
         {/* 统计卡片 */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border text-center">
-            <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
-            <div className="text-xs text-gray-500">总复习项</div>
+        <div className="grid grid-cols-3 gap-4 mb-8" role="group" aria-label="复习统计">
+          <div className="card p-4 text-center">
+            <div className="text-2xl font-bold" style={{ color: 'var(--color-primary)' }}>{stats.total}</div>
+            <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>总复习项</div>
           </div>
-          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border text-center">
-            <div className="text-2xl font-bold text-orange-600">{stats.due}</div>
-            <div className="text-xs text-gray-500">待复习</div>
+          <div className="card p-4 text-center">
+            <div className="text-2xl font-bold" style={{ color: 'var(--color-warning)' }}>{stats.due}</div>
+            <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>待复习</div>
           </div>
-          <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.reviewed_today}</div>
-            <div className="text-xs text-gray-500">今日已复习</div>
+          <div className="card p-4 text-center">
+            <div className="text-2xl font-bold" style={{ color: 'var(--color-success)' }}>{stats.reviewed_today}</div>
+            <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>今日已复习</div>
           </div>
         </div>
 
         {dueItems.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-xl font-semibold mb-2">太棒了！</h2>
-            <p className="text-gray-500">今天没有待复习的内容了</p>
-            <p className="text-sm text-gray-400 mt-2">
+          <div className="text-center py-16 card p-8" role="status">
+            <CheckCircleIcon className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--color-success)' }} aria-hidden="true" />
+            <h2 className="text-xl font-semibold mb-2 font-serif" style={{ color: 'var(--text-primary)' }}>太棒了！</h2>
+            <p style={{ color: 'var(--text-secondary)' }}>今天没有待复习的内容了</p>
+            <p className="text-sm mt-2" style={{ color: 'var(--text-tertiary)' }}>
               收藏带笔记的内容会自动加入复习队列
             </p>
           </div>
         ) : (
           <>
-            <div className="mb-4 flex items-center justify-between text-sm text-gray-500">
-              <span>{currentIndex + 1} / {dueItems.length}</span>
+            <div className="mb-4 flex items-center justify-between text-sm" style={{ color: 'var(--text-tertiary)' }}>
+              <span aria-live="polite">{currentIndex + 1} / {dueItems.length}</span>
               <span className="text-xs">键盘: 空格=显示, 0/1=忘记, 2/3=模糊, 4=良好, 5=完美</span>
             </div>
 
-            <div className="p-6 bg-white dark:bg-gray-800 rounded-xl border mb-6">
-              <h2 className="text-lg font-semibold mb-4">{dueItems[currentIndex].title}</h2>
+            <div className="card p-6 mb-6">
+              <h2 className="text-lg font-semibold mb-4 font-serif" style={{ color: 'var(--text-primary)' }}>{dueItems[currentIndex].title}</h2>
 
               {/* 复习间隔信息 */}
               {dueItems[currentIndex].next_review && (
-                <div className="text-xs text-gray-400 mb-3">
+                <div className="text-xs mb-3" style={{ color: 'var(--text-tertiary)' }}>
                   下次复习: {new Date(dueItems[currentIndex].next_review).toLocaleDateString()}
                   {" "}
                   间隔: {dueItems[currentIndex].interval} 天
@@ -185,60 +196,73 @@ export default function ReviewPage() {
               {!showAnswer ? (
                 <button
                   onClick={() => setShowAnswer(true)}
-                  className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="btn btn-primary w-full"
+                  autoFocus
                 >
                   显示内容 (空格键)
                 </button>
               ) : (
                 <>
-                  <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap mb-6">
+                  <p className="whitespace-pre-wrap mb-6" style={{ color: 'var(--text-secondary)' }}>
                     {dueItems[currentIndex].content.slice(0, 300)}
                     {dueItems[currentIndex].content.length > 300 ? "..." : ""}
                   </p>
 
                   {dueItems[currentIndex].notes && (
-                    <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg mb-6">
-                      <div className="text-xs text-yellow-600 dark:text-yellow-400 mb-1">📝 我的笔记</div>
-                      <p className="text-sm">{dueItems[currentIndex].notes}</p>
+                    <div className="p-3 rounded-lg mb-6" style={{ backgroundColor: 'var(--color-primary-light)' }}>
+                      <div className="text-xs mb-1 flex items-center gap-1" style={{ color: 'var(--color-primary)' }}>
+                        <PencilIcon className="w-3 h-3" aria-hidden="true" />
+                        我的笔记
+                      </div>
+                      <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{dueItems[currentIndex].notes}</p>
                     </div>
                   )}
 
-                  <div className="text-sm text-gray-500 mb-4">这次记住了吗？</div>
-                  <div className="grid grid-cols-5 gap-2">
+                  <div className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>这次记住了吗？</div>
+                  <div className="grid grid-cols-5 gap-2" role="group" aria-label="选择记忆程度">
                     <button
                       onClick={() => handleReview(0)}
-                      className="py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200"
+                      className="btn"
+                      style={{ backgroundColor: 'var(--color-error)', color: 'white' }}
                       title="完全忘记 (0)"
+                      aria-label="完全忘记"
                     >
                       忘记
                     </button>
                     <button
                       onClick={() => handleReview(2)}
-                      className="py-3 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-lg hover:bg-orange-200"
+                      className="btn"
+                      style={{ backgroundColor: 'var(--color-warning)', color: 'white' }}
                       title="模糊 (2)"
+                      aria-label="模糊"
                     >
                       模糊
                     </button>
                     <button
                       onClick={() => handleReview(3)}
-                      className="py-3 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-lg hover:bg-yellow-200"
+                      className="btn"
+                      style={{ backgroundColor: 'var(--color-warning)', color: 'white' }}
                       title="记得 (3)"
+                      aria-label="记得"
                     >
                       记得
                     </button>
                     <button
                       onClick={() => handleReview(4)}
-                      className="py-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-200"
+                      className="btn"
+                      style={{ backgroundColor: 'var(--color-success)', color: 'white' }}
                       title="良好 (4)"
+                      aria-label="良好"
                     >
                       良好
                     </button>
                     <button
                       onClick={() => handleReview(5)}
-                      className="py-3 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200"
+                      className="btn btn-primary"
                       title="完美 (5)"
+                      aria-label="完美"
                     >
-                      完美
+                      <SparklesIcon className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 </>
@@ -247,7 +271,7 @@ export default function ReviewPage() {
           </>
         )}
 
-        <div className="text-center text-sm text-gray-400">
+        <div className="text-center text-sm" style={{ color: 'var(--text-tertiary)' }}>
           <p>提示：在阅读内容时写下笔记，内容会自动加入复习队列</p>
         </div>
       </div>

@@ -1,18 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { api, FeedItem } from "@/lib/api";
+
+// Icons
+function BookIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0 6 2.292m0-14.25v14.25" />
+    </svg>
+  );
+}
+
+function ArrowRightIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+    </svg>
+  );
+}
+
+function CircleIcon() {
+  return (
+    <svg className="w-2 h-2" fill="currentColor" viewBox="0 0 8 8">
+      <circle cx="4" cy="4" r="4" />
+    </svg>
+  );
+}
 
 export default function RecentItems() {
   const [items, setItems] = useState<Array<{ id: number; feed_id: number; title: string }>>([]);
   const [loading, setLoading] = useState(true);
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   useEffect(() => {
     loadRecent();
   }, []);
 
-  async function loadRecent() {
+  const loadRecent = useCallback(async () => {
     setLoading(true);
     try {
       const feeds = await api.listFeeds();
@@ -28,11 +54,10 @@ export default function RecentItems() {
               .map((i) => ({ id: i.id, feed_id: feed.id, title: i.title, published_at: i.published_at }))
           );
         } catch {
-          // 忽略错误
+          // ignore error
         }
       }
 
-      // 按时间排序
       recent.sort((a, b) => {
         const dateA = a.published_at ? new Date(a.published_at).getTime() : 0;
         const dateB = b.published_at ? new Date(b.published_at).getTime() : 0;
@@ -45,44 +70,120 @@ export default function RecentItems() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  const memoizedItems = useMemo(() => items, [items]);
 
   if (loading) {
     return (
-      <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
-        <div className="animate-pulse space-y-2">
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
-        </div>
+      <div
+        className="card-elevated p-5 h-[180px]"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          backdropFilter: 'blur(12px)',
+        }}
+      >
+        <div className="skeleton h-full rounded" />
       </div>
     );
   }
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold">📖 待阅读</h3>
-        <Link href="/history" className="text-sm text-blue-600 hover:underline">
-          查看全部
+    <div
+      className="card-elevated p-5 transition-all duration-300 hover:shadow-lg"
+      style={{
+        backgroundColor: 'var(--surface-elevated)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: '1px solid var(--border-default)',
+        boxShadow: 'var(--shadow-card)',
+      }}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <span style={{ color: 'var(--color-primary)' }}>
+            <BookIcon />
+          </span>
+          <h3 className="font-semibold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}>
+            待阅读
+          </h3>
+        </div>
+        <Link
+          href="/history"
+          className="flex items-center gap-1 text-sm transition-colors hover:underline"
+          style={{ color: 'var(--color-primary)' }}
+        >
+          <span>查看全部</span>
+          <ArrowRightIcon />
         </Link>
       </div>
 
-      {items.length === 0 ? (
-        <p className="text-sm text-gray-500">暂无待阅读内容</p>
+      {memoizedItems.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-24 text-center">
+          <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
+            暂无待阅读内容
+          </p>
+          <Link
+            href="/discover"
+            className="text-sm mt-2 transition-colors"
+            style={{ color: 'var(--color-primary)' }}
+          >
+            发现新内容
+          </Link>
+        </div>
       ) : (
         <div className="space-y-2">
-          {items.map((item) => (
+          {memoizedItems.map((item, index) => (
             <Link
               key={`${item.feed_id}-${item.id}`}
               href={`/feeds/${item.feed_id}/items/${item.id}`}
-              className="block text-sm line-clamp-1 hover:text-blue-600"
+              className="flex items-center gap-2 group transition-all"
+              onMouseEnter={() => setHoveredId(item.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              style={{
+                animation: `fadeSlideIn 0.3s ease forwards`,
+                animationDelay: `${index * 50}ms`,
+                opacity: 0,
+              }}
             >
-              {item.title}
+              <span
+                className="flex-shrink-0 transition-all"
+                style={{ color: hoveredId === item.id ? 'var(--color-primary)' : 'var(--text-tertiary)' }}
+              >
+                <CircleIcon />
+              </span>
+              <span
+                className="text-sm truncate flex-1 transition-colors"
+                style={{ color: hoveredId === item.id ? 'var(--color-primary)' : 'var(--text-secondary)' }}
+              >
+                {item.title}
+              </span>
+              <span
+                className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all"
+                style={{
+                  color: 'var(--color-primary)',
+                  transform: hoveredId === item.id ? 'translateX(0)' : 'translateX(-4px)',
+                }}
+              >
+                <ArrowRightIcon />
+              </span>
             </Link>
           ))}
         </div>
       )}
+
+      <style jsx>{`
+        @keyframes fadeSlideIn {
+          from {
+            opacity: 0;
+            transform: translateX(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }

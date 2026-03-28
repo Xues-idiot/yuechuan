@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { api, Feed, FeedItem } from "@/lib/api";
+import { useState } from "react";
+import { api } from "@/lib/api";
+import { CheckCircle, Star, StarOff, Tag, X, Loader2 } from "lucide-react";
 
 interface BatchActionsProps {
   selectedIds: Set<number>;
@@ -59,7 +60,6 @@ export default function BatchActions({
     setAction("addTags");
     try {
       for (const id of selectedIds) {
-        // 获取现有标签并添加新标签
         const item = await api.getFeedItem(feedId, id);
         const existingTags = item.tags || "";
         const newTags = existingTags
@@ -76,41 +76,102 @@ export default function BatchActions({
     }
   }
 
+  const buttonClass = "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-[var(--radius-md)] transition-all disabled:opacity-50";
+
   return (
-    <div className="fixed bottom-4 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 z-50">
-      <div className="flex items-center gap-4 mb-3">
-        <span className="text-sm text-gray-500">已选择 {selectedIds.size} 项</span>
-        <button onClick={onCancel} className="text-gray-400 hover:text-gray-600">
-          ✕
+    <div
+      className="fixed bottom-6 right-6 rounded-[var(--radius-lg)] p-4 z-[var(--z-fixed)]"
+      style={{
+        backgroundColor: 'var(--surface-elevated)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: '1px solid var(--border-default)',
+        boxShadow: 'var(--shadow-xl)',
+      }}
+    >
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+          已选择 <span style={{ color: 'var(--color-primary)' }}>{selectedIds.size}</span> 项
+        </span>
+        <button
+          onClick={onCancel}
+          className="p-1 rounded-[var(--radius-sm)] transition-colors"
+          style={{ color: 'var(--text-tertiary)' }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--surface-secondary)';
+            e.currentTarget.style.color = 'var(--text-primary)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = 'var(--text-tertiary)';
+          }}
+        >
+          <X className="w-4 h-4" />
         </button>
       </div>
+
       <div className="flex flex-wrap gap-2">
         <button
           onClick={handleBatchMarkRead}
           disabled={loading}
-          className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          className={`${buttonClass} text-white`}
+          style={{ backgroundColor: 'var(--color-primary)' }}
         >
+          {action === "markRead" ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <CheckCircle className="w-4 h-4" />
+          )}
           {action === "markRead" ? "处理中..." : "全部标为已读"}
         </button>
+
         <button
           onClick={() => handleBatchMarkStarred(true)}
           disabled={loading}
-          className="px-3 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:opacity-50"
+          className={`${buttonClass} text-white`}
+          style={{ backgroundColor: 'var(--color-warning)' }}
         >
+          {action === "star" ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Star className="w-4 h-4" />
+          )}
           {action === "star" ? "处理中..." : "批量收藏"}
         </button>
+
         <button
           onClick={() => handleBatchMarkStarred(false)}
           disabled={loading}
-          className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+          className={`${buttonClass}`}
+          style={{
+            backgroundColor: 'var(--surface-secondary)',
+            color: 'var(--text-secondary)',
+            border: '1px solid var(--border-default)',
+          }}
         >
+          {action === "unstar" ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <StarOff className="w-4 h-4" />
+          )}
           {action === "unstar" ? "处理中..." : "取消收藏"}
         </button>
+
         <button
           onClick={handleBatchAddTags}
           disabled={loading}
-          className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+          className={`${buttonClass}`}
+          style={{
+            backgroundColor: 'var(--surface-secondary)',
+            color: 'var(--text-secondary)',
+            border: '1px solid var(--border-default)',
+          }}
         >
+          {action === "addTags" ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Tag className="w-4 h-4" />
+          )}
           {action === "addTags" ? "处理中..." : "添加标签"}
         </button>
       </div>

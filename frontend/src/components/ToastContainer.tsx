@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { CheckCircle, XCircle, Info, AlertTriangle, X } from "lucide-react";
 
 interface ToastItem {
   id: string;
@@ -20,7 +21,7 @@ function notifyListeners() {
 export function showToast(
   type: ToastItem["type"],
   message: string,
-  duration = 3000
+  duration = 4000
 ) {
   const id = String(++toastId);
   const toast: ToastItem = { id, type, message, duration };
@@ -44,6 +45,13 @@ export function clearAllToasts() {
   notifyListeners();
 }
 
+const icons = {
+  success: CheckCircle,
+  error: XCircle,
+  info: Info,
+  warning: AlertTriangle,
+};
+
 export default function ToastContainer() {
   const [currentToasts, setCurrentToasts] = useState<ToastItem[]>([]);
 
@@ -56,37 +64,51 @@ export default function ToastContainer() {
 
   if (currentToasts.length === 0) return null;
 
-  const icons: Record<ToastItem["type"], string> = {
-    success: "✅",
-    error: "❌",
-    info: "ℹ️",
-    warning: "⚠️",
-  };
-
-  const colors: Record<ToastItem["type"], string> = {
-    success: "bg-green-50 border-green-200 text-green-800",
-    error: "bg-red-50 border-red-200 text-red-800",
-    info: "bg-blue-50 border-blue-200 text-blue-800",
-    warning: "bg-yellow-50 border-yellow-200 text-yellow-800",
+  const colors: Record<ToastItem["type"], { bg: string; border: string; text: string }> = {
+    success: { bg: 'rgba(16, 185, 129, 0.1)', border: 'rgba(16, 185, 129, 0.3)', text: 'var(--color-success)' },
+    error: { bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.3)', text: 'var(--color-error)' },
+    info: { bg: 'rgba(14, 165, 233, 0.1)', border: 'rgba(14, 165, 233, 0.3)', text: 'var(--color-info)' },
+    warning: { bg: 'rgba(245, 158, 11, 0.1)', border: 'rgba(245, 158, 11, 0.3)', text: 'var(--color-warning)' },
   };
 
   return (
-    <div className="fixed bottom-20 right-4 z-50 space-y-2 max-w-sm">
-      {currentToasts.map((toast) => (
-        <div
-          key={toast.id}
-          className={`flex items-start gap-3 px-4 py-3 rounded-lg border shadow-lg ${colors[toast.type]} animate-slide-in`}
-        >
-          <span className="text-lg">{icons[toast.type]}</span>
-          <span className="flex-1 text-sm">{toast.message}</span>
-          <button
-            onClick={() => dismissToast(toast.id)}
-            className="text-gray-400 hover:text-gray-600"
+    <div
+      className="fixed bottom-20 right-4 z-[var(--z-toast)] space-y-2 max-w-sm"
+      role="region"
+      aria-label="通知提示"
+      aria-live="polite"
+    >
+      {currentToasts.map((toast) => {
+        const IconComponent = icons[toast.type];
+        return (
+          <div
+            key={toast.id}
+            role="alert"
+            className="flex items-start gap-3 px-4 py-3 rounded-[var(--radius-md)] border shadow-lg animate-slide-in"
+            style={{
+              backgroundColor: colors[toast.type].bg,
+              borderColor: colors[toast.type].border,
+            }}
           >
-            ✕
-          </button>
-        </div>
-      ))}
+            <IconComponent className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: colors[toast.type].text }} aria-hidden="true" />
+            <span className="flex-1 text-sm" style={{ color: colors[toast.type].text }}>{toast.message}</span>
+            <button
+              onClick={() => dismissToast(toast.id)}
+              className="flex-shrink-0 p-1 rounded transition-opacity hover:opacity-80"
+              style={{ color: 'var(--text-tertiary)' }}
+              aria-label="关闭提示"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--text-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--text-tertiary)';
+              }}
+            >
+              <X className="w-4 h-4" aria-hidden="true" />
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 }

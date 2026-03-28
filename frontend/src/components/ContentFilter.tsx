@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Filter, X } from "lucide-react";
 
 interface FilterOption {
   value: string;
@@ -49,32 +50,47 @@ export default function ContentFilter({ feedType, onFilterChange }: ContentFilte
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center gap-1.5 mr-2" style={{ color: 'var(--text-tertiary)' }}>
+        <Filter className="w-4 h-4" />
+        <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>筛选:</span>
+      </div>
+
       {filterOptions.map((option) => (
         <button
           key={option.value}
           onClick={() => toggleFilter(option.value)}
-          className={`px-3 py-1 text-sm rounded-full transition-colors ${
-            selected.includes(option.value)
-              ? "bg-blue-600 text-white"
-              : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
-          }`}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full transition-all"
+          style={{
+            backgroundColor: selected.includes(option.value) ? 'var(--color-primary)' : 'var(--surface-secondary)',
+            color: selected.includes(option.value) ? 'white' : 'var(--text-secondary)',
+          }}
         >
           {option.label}
           {option.count > 0 && (
-            <span className="ml-1 text-xs opacity-75">({option.count})</span>
+            <span
+              className="text-xs px-1.5 py-0.5 rounded-full"
+              style={{
+                backgroundColor: selected.includes(option.value) ? 'rgba(255,255,255,0.2)' : 'var(--surface-primary)',
+              }}
+            >
+              {option.count}
+            </span>
           )}
         </button>
       ))}
+
       {selected.length > 0 && (
         <button
           onClick={() => {
             setSelected([]);
             onFilterChange?.([]);
           }}
-          className="px-3 py-1 text-sm text-gray-500 hover:text-red-500"
+          className="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-full transition-colors"
+          style={{ color: 'var(--color-error)' }}
         >
-          清除筛选
+          <X className="w-3 h-3" />
+          清除
         </button>
       )}
     </div>

@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Key, ExternalLink, ChevronRight, CheckCircle2, XCircle, Loader2, Info } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
+import Button from "@/components/Button";
 
 export default function SettingsApiPage() {
   const [apiKey, setApiKey] = useState("");
@@ -60,103 +62,193 @@ export default function SettingsApiPage() {
     }
   }
 
+  const quickLinks = [
+    { label: "OpenAI API Keys", href: "https://platform.openai.com/api-keys" },
+    { label: "Notion Integrations", href: "https://www.notion.so/my-integrations" },
+    { label: "RSSHub 文档", href: "https://docs.rsshub.app" },
+  ];
+
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-2xl mx-auto">
+    <main className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+      <div className="max-w-2xl mx-auto px-6 py-8">
+        {/* Header */}
         <header className="mb-8 flex items-start justify-between">
           <div>
-            <Link href="/settings" className="text-sm text-gray-500 hover:text-blue-500 mb-2 block">
-              ← 返回设置
+            <Link
+              href="/settings"
+              className="inline-flex items-center gap-1 text-sm mb-3 transition-colors"
+              style={{ color: 'var(--text-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-primary)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+            >
+              <ChevronRight className="w-4 h-4 rotate-180" />
+              返回设置
             </Link>
-            <h1 className="text-2xl font-bold">API 配置</h1>
+            <h1 className="text-2xl font-serif font-bold" style={{ color: 'var(--text-primary)' }}>
+              API 配置
+            </h1>
           </div>
           <ThemeToggle />
         </header>
 
-        {/* API Keys */}
-        <section className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold mb-4">🔑 API 密钥</h2>
-          <div className="space-y-4">
+        {/* API Keys Section */}
+        <section
+          className="mb-6 p-6 rounded-[var(--radius-md)] border"
+          style={{
+            backgroundColor: 'var(--surface-primary)',
+            borderColor: 'var(--border-default)',
+            boxShadow: 'var(--shadow-card)',
+          }}
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <div
+              className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center"
+              style={{ backgroundColor: 'var(--color-primary-light)' }}
+            >
+              <Key className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
+            </div>
+            <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+              API 密钥
+            </h2>
+          </div>
+
+          <div className="space-y-5">
+            {/* OpenAI API Key */}
             <div>
-              <label className="block text-sm font-medium mb-1">OpenAI API Key</label>
+              <label
+                className="block text-sm font-medium mb-2"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                OpenAI API Key
+              </label>
               <input
                 type="password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder="sk-..."
-                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                className="input"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
                 用于 AI 摘要和翻译功能
               </p>
             </div>
 
+            {/* RSSHub URL */}
             <div>
-              <label className="block text-sm font-medium mb-1">RSSHub 地址</label>
+              <label
+                className="block text-sm font-medium mb-2"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                RSSHub 地址
+              </label>
               <input
                 type="text"
                 value={rsshubUrl}
                 onChange={(e) => setRsshubUrl(e.target.value)}
                 placeholder="https://rsshub.app"
-                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                className="input"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
                 如果官方 RSSHub 访问缓慢，可以部署自己的 RSSHub 实例
               </p>
             </div>
 
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              {saved ? "✓ 已保存" : "保存设置"}
-            </button>
+            <Button onClick={handleSave} variant="primary">
+              {saved ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  已保存
+                </>
+              ) : (
+                "保存设置"
+              )}
+            </Button>
           </div>
         </section>
 
-        {/* Notion Integration */}
-        <section className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold mb-4">📓 Notion 集成</h2>
-          <div className="space-y-4">
+        {/* Notion Integration Section */}
+        <section
+          className="mb-6 p-6 rounded-[var(--radius-md)] border"
+          style={{
+            backgroundColor: 'var(--surface-primary)',
+            borderColor: 'var(--border-default)',
+            boxShadow: 'var(--shadow-card)',
+          }}
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <div
+              className="w-9 h-9 rounded-[var(--radius-md)] flex items-center justify-center"
+              style={{ backgroundColor: 'var(--color-primary-light)' }}
+            >
+              <span className="text-lg font-serif font-bold" style={{ color: 'var(--color-primary)' }}>N</span>
+            </div>
+            <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+              Notion 集成
+            </h2>
+          </div>
+
+          <div className="space-y-5">
+            {/* Notion API Key */}
             <div>
-              <label className="block text-sm font-medium mb-1">Notion API Key</label>
+              <label
+                className="block text-sm font-medium mb-2"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                Notion API Key
+              </label>
               <input
                 type="password"
                 value={notionApiKey}
                 onChange={(e) => setNotionApiKey(e.target.value)}
                 placeholder="secret_..."
-                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                className="input"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
                 在 Notion 开发者平台创建 Integration 获取
               </p>
             </div>
 
+            {/* Notion Database ID */}
             <div>
-              <label className="block text-sm font-medium mb-1">Notion 数据库 ID</label>
+              <label
+                className="block text-sm font-medium mb-2"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                Notion 数据库 ID
+              </label>
               <input
                 type="text"
                 value={notionDatabaseId}
                 onChange={(e) => setNotionDatabaseId(e.target.value)}
                 placeholder="数据库 ID（URL 中的一段）"
-                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                className="input"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>
                 数据库需要包含：标题、来源、链接、发布日期等属性
               </p>
             </div>
 
+            {/* Test Connection */}
             <div className="flex items-center gap-3">
-              <button
+              <Button
                 onClick={handleTestNotion}
+                variant="outline"
                 disabled={testingNotion}
-                className="px-4 py-2 border border-purple-300 text-purple-600 rounded-lg hover:bg-purple-50 disabled:opacity-50"
+                icon={testingNotion ? <Loader2 className="w-4 h-4 animate-spin" /> : undefined}
               >
                 {testingNotion ? "测试中..." : "测试连接"}
-              </button>
+              </Button>
               {notionStatus && (
-                <span className={notionStatus.success ? "text-green-600" : "text-red-600"}>
-                  {notionStatus.success ? "✓" : "✗"} {notionStatus.message}
+                <span
+                  className="inline-flex items-center gap-1 text-sm"
+                  style={{ color: notionStatus.success ? 'var(--color-success)' : 'var(--color-error)' }}
+                >
+                  {notionStatus.success ? (
+                    <CheckCircle2 className="w-4 h-4" />
+                  ) : (
+                    <XCircle className="w-4 h-4" />
+                  )}
+                  {notionStatus.message}
                 </span>
               )}
             </div>
@@ -164,33 +256,32 @@ export default function SettingsApiPage() {
         </section>
 
         {/* Quick Links */}
-        <section className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-          <h3 className="font-medium mb-2">相关链接</h3>
-          <div className="space-y-1 text-sm">
-            <a
-              href="https://platform.openai.com/api-keys"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-blue-600 hover:underline"
-            >
-              OpenAI API Keys →
-            </a>
-            <a
-              href="https://www.notion.so/my-integrations"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-blue-600 hover:underline"
-            >
-              Notion Integrations →
-            </a>
-            <a
-              href="https://docs.rsshub.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-blue-600 hover:underline"
-            >
-              RSSHub 文档 →
-            </a>
+        <section
+          className="p-5 rounded-[var(--radius-md)]"
+          style={{ backgroundColor: 'var(--surface-secondary)' }}
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Info className="w-4 h-4" style={{ color: 'var(--color-info)' }} />
+            <h3 className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>
+              相关链接
+            </h3>
+          </div>
+          <div className="space-y-2">
+            {quickLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm transition-colors"
+                style={{ color: 'var(--color-primary)' }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+              >
+                {link.label}
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            ))}
           </div>
         </section>
       </div>

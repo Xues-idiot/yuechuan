@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { X } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -47,20 +48,37 @@ export default function Modal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div
+      className="fixed inset-0 flex items-center justify-center z-[var(--z-modal-backdrop)] p-4"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+    >
       <div
         ref={modalRef}
-        className={`bg-white dark:bg-gray-800 rounded-lg w-full ${sizes[size]} shadow-xl`}
+        className={`w-full ${sizes[size]} rounded-[var(--radius-lg)] overflow-hidden`}
+        style={{
+          backgroundColor: 'var(--surface-primary)',
+          boxShadow: 'var(--shadow-xl)',
+        }}
+        role="dialog"
+        aria-modal="true"
       >
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold">{title}</h3>
+          <div
+            className="flex items-center justify-between px-6 py-4"
+            style={{ borderBottom: '1px solid var(--border-default)' }}
+          >
+            <h3 className="font-serif font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>
+              {title}
+            </h3>
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-1 rounded-[var(--radius-sm)] transition-colors"
+                style={{ color: 'var(--text-tertiary)' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-secondary)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             )}
           </div>

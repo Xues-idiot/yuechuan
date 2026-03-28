@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
 
 type Theme = "light" | "dark" | "auto";
 
@@ -24,6 +24,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("auto");
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("dark");
 
+  // Load theme from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem("theme") as Theme | null;
     if (stored && ["light", "dark", "auto"].includes(stored)) {
@@ -31,6 +32,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Update resolved theme when theme or system preference changes
   useEffect(() => {
     function updateResolvedTheme() {
       if (theme === "auto") {
@@ -50,6 +52,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mediaQuery.removeEventListener("change", handler);
   }, [theme]);
 
+  // Apply theme class to document
   useEffect(() => {
     if (resolvedTheme === "dark") {
       document.documentElement.classList.add("dark");
@@ -58,13 +61,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [resolvedTheme]);
 
-  function setTheme(newTheme: Theme) {
+  const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
     localStorage.setItem("theme", newTheme);
-  }
+  }, []);
+
+  const value = useMemo(() => ({
+    theme,
+    setTheme,
+    resolvedTheme,
+  }), [theme, setTheme, resolvedTheme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

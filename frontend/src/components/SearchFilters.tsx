@@ -2,8 +2,8 @@
 
 import { useState, useCallback } from "react";
 import Collapsible from "./Collapsible";
-import Badge from "./Badge";
 import Button from "./Button";
+import { Calendar, CheckCircle, Rss, Tag, RotateCcw } from "lucide-react";
 
 interface SearchFiltersProps {
   feeds: Array<{ id: number; name: string }>;
@@ -72,8 +72,12 @@ export default function SearchFilters({
 
   return (
     <div className="space-y-4">
-      {/* 日期范围 */}
-      <Collapsible title="时间范围" defaultOpen>
+      {/* Date Range */}
+      <Collapsible
+        title="时间范围"
+        defaultOpen
+        icon={<Calendar className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />}
+      >
         <div className="flex flex-wrap gap-2">
           {[
             { value: "all", label: "全部" },
@@ -88,11 +92,12 @@ export default function SearchFilters({
                   dateRange: option.value as FilterState["dateRange"],
                 })
               }
-              className={`px-3 py-1 text-sm rounded-full transition-colors ${
-                filters.dateRange === option.value
-                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
-              }`}
+              className="px-3 py-1.5 text-sm rounded-full transition-all"
+              style={{
+                backgroundColor: filters.dateRange === option.value ? 'var(--color-primary-light)' : 'var(--surface-secondary)',
+                color: filters.dateRange === option.value ? 'var(--color-primary)' : 'var(--text-secondary)',
+                border: filters.dateRange === option.value ? '1px solid var(--color-primary)' : '1px solid transparent',
+              }}
             >
               {option.label}
             </button>
@@ -100,8 +105,12 @@ export default function SearchFilters({
         </div>
       </Collapsible>
 
-      {/* 已读状态 */}
-      <Collapsible title="状态" defaultOpen>
+      {/* Read Status */}
+      <Collapsible
+        title="状态"
+        defaultOpen
+        icon={<CheckCircle className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />}
+      >
         <div className="flex flex-wrap gap-2">
           {[
             { value: "all", label: "全部" },
@@ -115,11 +124,12 @@ export default function SearchFilters({
                   readStatus: option.value as FilterState["readStatus"],
                 })
               }
-              className={`px-3 py-1 text-sm rounded-full transition-colors ${
-                filters.readStatus === option.value
-                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
-              }`}
+              className="px-3 py-1.5 text-sm rounded-full transition-all"
+              style={{
+                backgroundColor: filters.readStatus === option.value ? 'var(--color-primary-light)' : 'var(--surface-secondary)',
+                color: filters.readStatus === option.value ? 'var(--color-primary)' : 'var(--text-secondary)',
+                border: filters.readStatus === option.value ? '1px solid var(--color-primary)' : '1px solid transparent',
+              }}
             >
               {option.label}
             </button>
@@ -127,19 +137,23 @@ export default function SearchFilters({
         </div>
       </Collapsible>
 
-      {/* 订阅源 */}
+      {/* Feeds */}
       {feeds.length > 0 && (
-        <Collapsible title={`订阅源 (${feeds.length})`}>
+        <Collapsible
+          title={`订阅源 (${feeds.length})`}
+          icon={<Rss className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />}
+        >
           <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto">
             {feeds.map((feed) => (
               <button
                 key={feed.id}
                 onClick={() => toggleFeed(feed.id)}
-                className={`px-3 py-1 text-sm rounded-full transition-colors ${
-                  filters.feedIds.includes(feed.id)
-                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
-                }`}
+                className="px-3 py-1.5 text-sm rounded-full transition-all"
+                style={{
+                  backgroundColor: filters.feedIds.includes(feed.id) ? 'var(--color-primary-light)' : 'var(--surface-secondary)',
+                  color: filters.feedIds.includes(feed.id) ? 'var(--color-primary)' : 'var(--text-secondary)',
+                  border: filters.feedIds.includes(feed.id) ? '1px solid var(--color-primary)' : '1px solid transparent',
+                }}
               >
                 {feed.name}
               </button>
@@ -148,19 +162,23 @@ export default function SearchFilters({
         </Collapsible>
       )}
 
-      {/* 标签 */}
+      {/* Tags */}
       {tags.length > 0 && (
-        <Collapsible title={`标签 (${tags.length})`}>
+        <Collapsible
+          title={`标签 (${tags.length})`}
+          icon={<Tag className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />}
+        >
           <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto">
             {tags.map((tag) => (
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className={`px-3 py-1 text-sm rounded-full transition-colors ${
-                  filters.tags.includes(tag)
-                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
-                }`}
+                className="px-3 py-1.5 text-sm rounded-full transition-all"
+                style={{
+                  backgroundColor: filters.tags.includes(tag) ? 'var(--color-primary-light)' : 'var(--surface-secondary)',
+                  color: filters.tags.includes(tag) ? 'var(--color-primary)' : 'var(--text-secondary)',
+                  border: filters.tags.includes(tag) ? '1px solid var(--color-primary)' : '1px solid transparent',
+                }}
               >
                 #{tag}
               </button>
@@ -169,14 +187,15 @@ export default function SearchFilters({
         </Collapsible>
       )}
 
-      {/* 清除筛选 */}
+      {/* Clear Filters */}
       {hasActiveFilters && (
-        <div className="pt-4 border-t">
+        <div className="pt-4" style={{ borderTop: '1px solid var(--border-default)' }}>
           <Button
             variant="ghost"
             size="sm"
             onClick={clearAllFilters}
             className="w-full"
+            icon={<RotateCcw className="w-4 h-4" />}
           >
             清除所有筛选
           </Button>

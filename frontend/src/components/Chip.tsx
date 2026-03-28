@@ -15,30 +15,51 @@ export default function Chip({
   removable = false,
   onRemove,
 }: ChipProps) {
-  const variants = {
-    default: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
-    success: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    warning: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-    danger: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-    info: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  const variantStyles = {
+    default: {
+      backgroundColor: 'var(--surface-secondary)',
+      color: 'var(--text-secondary)',
+    },
+    success: {
+      backgroundColor: 'rgba(16, 185, 129, 0.15)',
+      color: 'var(--color-success)',
+    },
+    warning: {
+      backgroundColor: 'rgba(245, 158, 11, 0.15)',
+      color: 'var(--color-warning)',
+    },
+    danger: {
+      backgroundColor: 'rgba(239, 68, 68, 0.15)',
+      color: 'var(--color-error)',
+    },
+    info: {
+      backgroundColor: 'var(--color-primary-light)',
+      color: 'var(--color-primary)',
+    },
   };
 
   const sizes = {
-    sm: "px-2 py-0.5 text-xs",
-    md: "px-3 py-1 text-sm",
+    sm: { padding: '2px 8px', fontSize: '12px' },
+    md: { padding: '4px 12px', fontSize: '14px' },
   };
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full font-medium ${variants[variant]} ${sizes[size]}`}
+      className="inline-flex items-center gap-1 font-medium"
+      style={{
+        borderRadius: 'var(--radius-full)',
+        ...sizes[size],
+        ...variantStyles[variant],
+      }}
     >
       {children}
       {removable && (
         <button
           onClick={onRemove}
           className="ml-1 hover:opacity-70 transition-opacity"
+          style={{ color: 'inherit' }}
         >
-          ✕
+          x
         </button>
       )}
     </span>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Button from "./Button";
 import Badge from "./Badge";
+import { ChevronDown, X } from "lucide-react";
 
 interface FilterOption {
   value: string;
@@ -29,14 +29,12 @@ export default function FilterBar({
 
   const handleSelect = (optionValue: string) => {
     if (multiple) {
-      // 多选模式
       if (value.includes(optionValue)) {
         onChange(value.filter((v) => v !== optionValue));
       } else {
         onChange([...value, optionValue]);
       }
     } else {
-      // 单选模式
       onChange(value.includes(optionValue) ? [] : [optionValue]);
     }
   };
@@ -52,14 +50,24 @@ export default function FilterBar({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
           {title}
         </span>
         {hasSelection && (
           <button
             onClick={clearAll}
-            className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-400"
+            className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-[var(--radius-sm)] transition-colors"
+            style={{ color: 'var(--text-tertiary)' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--color-error)';
+              e.currentTarget.style.backgroundColor = 'var(--surface-secondary)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--text-tertiary)';
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
           >
+            <X className="w-3 h-3" />
             清除
           </button>
         )}
@@ -72,11 +80,12 @@ export default function FilterBar({
             <button
               key={option.value}
               onClick={() => handleSelect(option.value)}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-full transition-colors ${
-                isSelected
-                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-300 dark:border-blue-700"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 border border-transparent"
-              }`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full transition-all"
+              style={{
+                backgroundColor: isSelected ? 'var(--color-primary-light)' : 'var(--surface-secondary)',
+                color: isSelected ? 'var(--color-primary)' : 'var(--text-secondary)',
+                border: isSelected ? '1px solid var(--color-primary)' : '1px solid transparent',
+              }}
             >
               {option.label}
               {option.count !== undefined && (
@@ -91,9 +100,13 @@ export default function FilterBar({
         {showExpandButton && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="inline-flex items-center gap-1 px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-400"
+            className="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-full transition-colors"
+            style={{ color: 'var(--color-primary)' }}
           >
-            {isExpanded ? "收起" : `+${options.length - 8} 更多`}
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            />
+            {isExpanded ? '收起' : `+${options.length - 8} 更多`}
           </button>
         )}
       </div>

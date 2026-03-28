@@ -177,20 +177,21 @@ export default function FeedDetailPage({ params }: { params: Promise<{ id: strin
         </header>
 
         {/* 筛选器与排序 */}
-        <div className="mb-6 flex flex-wrap gap-2 items-center justify-between">
-          <div className="flex gap-2">
+        <div className="mb-6 flex flex-wrap gap-2 items-center justify-between" role="region" aria-label="过滤和排序选项">
+          <div className="flex gap-2" role="group" aria-label="状态过滤">
             {(["all", "unread", "starred"] as FilterType[]).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3 py-1 text-sm rounded-full ${
+                aria-pressed={filter === f}
+                className={`px-3 py-1 text-sm rounded-full transition-colors ${
                   filter === f
                     ? "bg-blue-600 text-white"
                     : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
                 }`}
               >
                 {f === "all" ? "全部" : f === "unread" ? "未读" : "已收藏"}
-                <span className="ml-1 text-xs opacity-75">
+                <span className="ml-1 text-xs opacity-75" aria-label={`${f === "all" ? items.length : f === "unread" ? items.filter(i => !i.is_read).length : items.filter(i => i.is_starred).length} 篇`}>
                   ({f === "all" ? items.length : f === "unread" ? items.filter(i => !i.is_read).length : items.filter(i => i.is_starred).length})
                 </span>
               </button>
@@ -261,8 +262,9 @@ export default function FeedDetailPage({ params }: { params: Promise<{ id: strin
         ) : (
           <div className="space-y-3">
             {filteredItems.map((item) => (
-              <div
+              <article
                 key={item.id}
+                aria-label={item.title}
                 className={`relative block p-4 bg-white dark:bg-gray-800 rounded-lg border transition-colors ${
                   selectedIds.has(item.id)
                     ? "border-purple-500 ring-1 ring-purple-500"
@@ -286,7 +288,7 @@ export default function FeedDetailPage({ params }: { params: Promise<{ id: strin
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold line-clamp-2">{item.title}</h3>
+                    <h3 className="font-semibold line-clamp-2 font-serif">{item.title}</h3>
                     <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
                       {item.author && <span>{item.author}</span>}
                       {item.published_at && (
@@ -306,7 +308,7 @@ export default function FeedDetailPage({ params }: { params: Promise<{ id: strin
                     />
                   )}
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}

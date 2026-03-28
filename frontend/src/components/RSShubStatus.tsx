@@ -1,11 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+
+// Icons
+function GlobeIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
+    </svg>
+  );
+}
+
+function RefreshIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+    </svg>
+  );
+}
+
+function SaveIcon() {
+  return (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+    </svg>
+  );
+}
 
 export default function RSShubStatus() {
   const [status, setStatus] = useState<"checking" | "online" | "offline">("checking");
   const [latency, setLatency] = useState<number | null>(null);
   const [url, setUrl] = useState("");
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     const rsshubUrl = localStorage.getItem("rsshub_url") || "https://rsshub.app";
@@ -18,6 +44,7 @@ export default function RSShubStatus() {
 
     async function checkStatus() {
       setStatus("checking");
+      setChecking(true);
       const start = Date.now();
 
       try {
@@ -35,10 +62,16 @@ export default function RSShubStatus() {
           setLatency(Date.now() - start);
         } else {
           setStatus("offline");
+          setLatency(null);
         }
       } catch {
         if (!isMounted) return;
         setStatus("offline");
+        setLatency(null);
+      } finally {
+        if (isMounted) {
+          setChecking(false);
+        }
       }
     }
 
@@ -51,9 +84,9 @@ export default function RSShubStatus() {
     };
   }, []);
 
-  function checkStatus(rsshubUrl: string) {
-    // Legacy function kept for manual checks
+  const checkStatusFn = useCallback((rsshubUrl: string) => {
     setStatus("checking");
+    setChecking(true);
     const start = Date.now();
 
     const controller = new AbortController();
@@ -70,52 +103,84 @@ export default function RSShubStatus() {
           setLatency(Date.now() - start);
         } else {
           setStatus("offline");
+          setLatency(null);
         }
       })
       .catch(() => {
         clearTimeout(timeout);
         setStatus("offline");
+        setLatency(null);
+      })
+      .finally(() => {
+        setChecking(false);
       });
-  }
+  }, []);
 
-  function handleCheck() {
+  const handleCheck = useCallback(() => {
     if (url) {
-      checkStatus(url);
+      checkStatusFn(url);
     }
-  }
+  }, [url, checkStatusFn]);
+
+  const handleSave = useCallback(() => {
+    localStorage.setItem("rsshub_url", url);
+  }, [url]);
+
+  const statusConfig = {
+    online: { color: 'var(--color-success)', label: '在线' },
+    offline: { color: 'var(--color-error)', label: '离线' },
+    checking: { color: 'var(--color-warning)', label: '检测中...' },
+  };
+
+  const currentStatus = statusConfig[status];
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold">🌐 RSSHub 状态</h3>
+    <div
+      className="card-elevated p-5 transition-all duration-300 hover:shadow-lg"
+      style={{
+        backgroundColor: 'var(--surface-elevated)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: '1px solid var(--border-default)',
+        boxShadow: 'var(--shadow-card)',
+      }}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <span style={{ color: 'var(--color-primary)' }}>
+            <GlobeIcon />
+          </span>
+          <h3 className="font-semibold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}>
+            RSSHub 状态
+          </h3>
+        </div>
         <button
           onClick={handleCheck}
-          className="text-sm text-blue-600 hover:underline"
+          disabled={checking || !url}
+          className="btn btn-ghost flex items-center gap-1 text-sm py-1 px-2 disabled:opacity-50"
+          style={{ color: 'var(--color-primary)' }}
         >
-          检测
+          <RefreshIcon className={checking ? 'animate-spin' : ''} />
+          <span>{checking ? '检测中' : '检测'}</span>
         </button>
       </div>
 
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <span
-            className={`w-3 h-3 rounded-full ${
-              status === "online"
-                ? "bg-green-500"
-                : status === "offline"
-                ? "bg-red-500"
-                : "bg-yellow-500 animate-pulse"
-            }`}
+            className="w-3 h-3 rounded-full transition-colors"
+            style={{
+              backgroundColor: currentStatus.color,
+              boxShadow: status === 'online' ? `0 0 8px ${currentStatus.color}` : 'none',
+            }}
           />
-          <span className="text-sm">
-            {status === "online"
-              ? "在线"
-              : status === "offline"
-              ? "离线"
-              : "检测中..."}
+          <span className="text-sm font-medium" style={{ color: currentStatus.color }}>
+            {currentStatus.label}
           </span>
           {latency !== null && status === "online" && (
-            <span className="text-xs text-gray-500">({latency}ms)</span>
+            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
+              ({latency}ms)
+            </span>
           )}
         </div>
 
@@ -125,20 +190,23 @@ export default function RSShubStatus() {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://rsshub.app"
-            className="flex-1 px-3 py-1 text-sm border rounded dark:bg-gray-700"
+            className="input flex-1"
           />
           <button
-            onClick={() => {
-              localStorage.setItem("rsshub_url", url);
-            }}
-            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={handleSave}
+            className="btn btn-secondary flex items-center gap-1"
+            style={{ padding: '0 var(--space-3)' }}
           >
-            保存
+            <SaveIcon />
+            <span className="hidden sm:inline">保存</span>
           </button>
         </div>
 
         {status === "offline" && (
-          <p className="text-xs text-red-500">
+          <p
+            className="text-xs animate-fade-in"
+            style={{ color: 'var(--color-error)' }}
+          >
             RSSHub 不可用，请检查地址或部署自己的 RSSHub 实例
           </p>
         )}
