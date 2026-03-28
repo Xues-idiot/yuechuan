@@ -94,10 +94,15 @@ yuechuan/
 
 | 层级 | 技术 |
 |------|------|
-| 前端 | Next.js 15 / React / shadcn/ui |
-| 后端 | Python / FastAPI / LangGraph |
+| 前端 | Next.js 15 / React / Tailwind CSS |
+| 后端 | Python / FastAPI / SQLAlchemy |
 | 数据库 | PostgreSQL / ChromaDB |
-| AI | Whisper / GPT / DeepL |
+| AI | OpenAI GPT / Whisper |
+
+### 设计系统
+- 风格：Editorial Minimalism + Glassmorphism
+- 配色：Slate Navy + Cyan Accent (#0369A1)
+- 字体：Source Serif 4 + Inter + JetBrains Mono
 
 ---
 
@@ -114,9 +119,10 @@ yuechuan/
 
 ## Roadmap
 
-- [ ] MVP: 多平台订阅 + 图文阅读 + AI摘要
-- [ ] V1.0: 视频转录 + 翻译
-- [ ] V2.0: 知识图谱 + 间隔复习
+- [x] MVP: 多平台订阅 + 图文阅读 + AI摘要
+- [x] V1.0: 视频转录 + 翻译
+- [x] V2.0: 知识图谱 + 间隔复习
+- [x] 前端设计系统重构 (1000轮迭代)
 
 ---
 
@@ -126,4 +132,4 @@ MIT
 
 ---
 
-*阅川 - 让阅读更高效 | 2026-03-25*
+*阅川 - 让阅读更高效 | 2026-03-28*
