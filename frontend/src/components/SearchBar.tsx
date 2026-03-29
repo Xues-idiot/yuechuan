@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
 
@@ -19,15 +19,40 @@ export default function SearchBar({
 }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
+  const [showShortcut, setShowShortcut] = useState(true);
   const router = useRouter();
 
-  function handleSearch(e: React.FormEvent) {
+  // Listen for Cmd/Ctrl+K to focus search
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+      }
+      // Escape key to clear input when focused
+      if (e.key === 'Escape' && focused) {
+        e.preventDefault();
+        handleClear();
+        document.querySelector<HTMLInputElement>('input[type="text"]')?.blur();
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [focused]);
+
+  // Hide shortcut hint when user starts typing
+  useEffect(() => {
+    if (query) setShowShortcut(false);
+    else setShowShortcut(true);
+  }, [query]);
+
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
       onSearch?.(query.trim());
       router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     }
-  }
+  }, [query, onSearch, router]);
 
   function handleClear() {
     setQuery("");
@@ -61,6 +86,20 @@ export default function SearchBar({
           style={{ color: 'var(--text-primary)' }}
           aria-label="搜索"
         />
+        {/* Keyboard shortcut hint */}
+        {showShortcut && !focused && (
+          <kbd
+            className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded border transition-opacity"
+            style={{
+              backgroundColor: 'var(--surface-secondary)',
+              borderColor: 'var(--border-default)',
+              color: 'var(--text-tertiary)',
+              opacity: 0.7,
+            }}
+          >
+            <span>⌘</span><span>K</span>
+          </kbd>
+        )}
         <Search
           className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none transition-colors"
           style={{ color: focused ? 'var(--color-primary)' : 'var(--text-tertiary)' }}
