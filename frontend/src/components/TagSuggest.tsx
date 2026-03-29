@@ -60,7 +60,7 @@ export default function TagSuggest({ content, existingTags = [], onSuggest }: Ta
 
   return (
     <div className="mt-2">
-      <span className="text-xs text-gray-500 mr-2">推荐标签:</span>
+      <span className="text-xs mr-2" style={{ color: 'var(--text-tertiary)' }}>推荐标签:</span>
       {suggested.map((tag) => (
         <button
           key={tag}
@@ -69,7 +69,19 @@ export default function TagSuggest({ content, existingTags = [], onSuggest }: Ta
             const event = new CustomEvent("addTag", { detail: tag });
             window.dispatchEvent(event);
           }}
-          className="inline-block px-2 py-0.5 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded hover:bg-blue-200 mr-1"
+          className="inline-block px-2 py-0.5 text-xs rounded mr-1 transition-colors"
+          style={{
+            backgroundColor: 'var(--color-primary-light)',
+            color: 'var(--color-primary)',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+            e.currentTarget.style.color = 'white';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--color-primary-light)';
+            e.currentTarget.style.color = 'var(--color-primary)';
+          }}
         >
           + {tag}
         </button>

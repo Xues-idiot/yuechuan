@@ -27,10 +27,14 @@ export default function AvatarGroup({ avatars, max = 4, size = "md" }: AvatarGro
       {displayed.map((avatar, index) => (
         <div
           key={index}
-          className={`${sizes[size].className} rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium border-2 border-white dark:border-gray-800 ${
+          className={`${sizes[size].className} rounded-full flex items-center justify-center text-white font-medium border-2 ${
             index > 0 ? "-ml-2" : ""
           }`}
-          style={{ zIndex: displayed.length - index }}
+          style={{
+            zIndex: displayed.length - index,
+            background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%)',
+            borderColor: 'var(--surface-primary)',
+          }}
         >
           {avatar.src ? (
             <Image
@@ -49,8 +53,13 @@ export default function AvatarGroup({ avatars, max = 4, size = "md" }: AvatarGro
 
       {remaining > 0 && (
         <div
-          className={`${sizes[size].className} rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 font-medium border-2 border-white dark:border-gray-800 -ml-2`}
-          style={{ zIndex: 0 }}
+          className={`${sizes[size].className} rounded-full flex items-center justify-center font-medium border-2 -ml-2`}
+          style={{
+            zIndex: 0,
+            backgroundColor: 'var(--surface-secondary)',
+            color: 'var(--text-tertiary)',
+            borderColor: 'var(--surface-primary)',
+          }}
         >
           +{remaining}
         </div>

@@ -41,9 +41,12 @@ export default function LazyImage({
   return (
     <div ref={imgRef} className={`relative ${className}`}>
       {(!loaded || !inView) && (
-        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
+        <div
+          className="absolute inset-0 animate-pulse flex items-center justify-center"
+          style={{ backgroundColor: 'var(--surface-secondary)' }}
+        >
           {placeholder || (
-            <span className="text-gray-400">加载中...</span>
+            <span style={{ color: 'var(--text-tertiary)' }}>加载中...</span>
           )}
         </div>
       )}
