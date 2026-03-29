@@ -36,6 +36,7 @@ export default function Card({
         border: '1px solid var(--border-default)',
         boxShadow: isHovered ? 'var(--shadow-card-hover)' : 'var(--shadow-card)',
         borderColor: isHovered ? 'var(--border-hover)' : 'var(--border-default)',
+        transform: isHovered && isInteractive ? 'translateY(-2px) scale(1.01)' : 'translateY(0) scale(1)',
       }}
       onMouseEnter={() => isInteractive && setIsHovered(true)}
       onMouseLeave={() => isInteractive && setIsHovered(false)}

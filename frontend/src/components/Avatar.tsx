@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useId } from "react";
+import Image from "next/image";
 
 interface AvatarProps {
   src?: string;
@@ -14,11 +15,11 @@ interface AvatarProps {
 }
 
 const sizeMap = {
-  xs: { width: '20px', height: '20px', fontSize: '8px', badge: '6px' },
-  sm: { width: '24px', height: '24px', fontSize: '10px', badge: '8px' },
-  md: { width: '32px', height: '32px', fontSize: '12px', badge: '10px' },
-  lg: { width: '48px', height: '48px', fontSize: '14px', badge: '12px' },
-  xl: { width: '64px', height: '64px', fontSize: '18px', badge: '14px' },
+  xs: { width: 20, height: 20, fontSize: '8px', badge: '6px' },
+  sm: { width: 24, height: 24, fontSize: '10px', badge: '8px' },
+  md: { width: 32, height: 32, fontSize: '12px', badge: '10px' },
+  lg: { width: 48, height: 48, fontSize: '14px', badge: '12px' },
+  xl: { width: 64, height: 64, fontSize: '18px', badge: '14px' },
 };
 
 const statusColors = {
@@ -127,12 +128,15 @@ export default function Avatar({
       aria-label={onClick ? `${accessibleName}，点击查看详情` : undefined}
     >
       {src && !imageError ? (
-        <img
+        <Image
           src={src}
           alt={accessibleName}
+          width={dimensions.width}
+          height={dimensions.height}
           style={avatarStyle}
           onError={handleError}
           aria-labelledby={onClick ? avatarId : undefined}
+          unoptimized
         />
       ) : (
         <div

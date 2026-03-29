@@ -116,7 +116,7 @@ export default function HomePage() {
         </header>
 
         {/* 状态栏卡片 */}
-        <div className="grid gap-4 md:grid-cols-4 mb-10">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-10">
           <RSShubStatus />
           <ReadingGoalWidget />
           <ReadingStreak />

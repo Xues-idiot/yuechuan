@@ -34,10 +34,6 @@ export default function RecentItems() {
   const [loading, setLoading] = useState(true);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
-  useEffect(() => {
-    loadRecent();
-  }, []);
-
   const loadRecent = useCallback(async () => {
     setLoading(true);
     try {
@@ -71,6 +67,10 @@ export default function RecentItems() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    loadRecent();
+  }, [loadRecent]);
 
   const memoizedItems = useMemo(() => items, [items]);
 

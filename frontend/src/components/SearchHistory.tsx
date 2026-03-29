@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, History } from "lucide-react";
 import Button from "./Button";
 
@@ -25,7 +25,7 @@ export default function SearchHistory({ onSelect, onClear }: SearchHistoryProps)
     }
   }, []);
 
-  const addToHistory = (query: string) => {
+  const addToHistory = useCallback((query: string) => {
     if (!query.trim()) return;
 
     const newHistory = [
@@ -35,19 +35,19 @@ export default function SearchHistory({ onSelect, onClear }: SearchHistoryProps)
 
     setHistory(newHistory);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));
-  };
+  }, [history]);
 
-  const removeFromHistory = (query: string) => {
+  const removeFromHistory = useCallback((query: string) => {
     const newHistory = history.filter((h) => h !== query);
     setHistory(newHistory);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newHistory));
-  };
+  }, [history]);
 
-  const clearAllHistory = () => {
+  const clearAllHistory = useCallback(() => {
     setHistory([]);
     localStorage.removeItem(STORAGE_KEY);
     onClear();
-  };
+  }, [onClear]);
 
   // 暴露方法给父组件
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function SearchHistory({ onSelect, onClear }: SearchHistoryProps)
       delete (window as any).__searchHistoryAdd;
       delete (window as any).__searchHistoryClear;
     };
-  }, [history]);
+  }, [addToHistory, clearAllHistory]);
 
   if (history.length === 0) {
     return null;

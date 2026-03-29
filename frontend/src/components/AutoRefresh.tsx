@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
 
 interface AutoRefreshProps {
@@ -13,6 +13,22 @@ export default function AutoRefresh({ intervalMinutes = 30 }: AutoRefreshProps) 
   const [nextRefresh, setNextRefresh] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(async () => {
+    if (refreshing) return;
+
+    setRefreshing(true);
+    try {
+      await api.refreshAllFeeds();
+      setLastRefresh(new Date());
+      // 重置下次刷新时间
+      setNextRefresh(new Date(Date.now() + intervalMinutes * 60 * 1000));
+    } catch (e) {
+      console.error("Auto refresh failed:", e);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refreshing, intervalMinutes]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -32,23 +48,7 @@ export default function AutoRefresh({ intervalMinutes = 30 }: AutoRefreshProps) 
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [enabled, intervalMinutes]);
-
-  async function handleRefresh() {
-    if (refreshing) return;
-
-    setRefreshing(true);
-    try {
-      await api.refreshAllFeeds();
-      setLastRefresh(new Date());
-      // 重置下次刷新时间
-      setNextRefresh(new Date(Date.now() + intervalMinutes * 60 * 1000));
-    } catch (e) {
-      console.error("Auto refresh failed:", e);
-    } finally {
-      setRefreshing(false);
-    }
-  }
+  }, [enabled, intervalMinutes, handleRefresh]);
 
   function formatTime(date: Date) {
     return date.toLocaleTimeString("zh-CN", {

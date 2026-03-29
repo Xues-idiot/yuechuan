@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use, useCallback, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { api, FeedItemDetail, SimilarItem, estimateReadingTime } from "@/lib/api";
 import { downloadMarkdown, exportToMarkdown, copyToClipboard } from "@/lib/export";
 import { addProgress } from "@/lib/reading-goal";
@@ -57,6 +58,162 @@ export default function ItemDetailPage({
     return () => window.removeEventListener("scroll", handleScroll);
   }, [updatePosition]);
 
+  useEffect(() => {
+    async function load() {
+      try {
+        setError(null);
+        const data = await api.getFeedItem(feedIdNum, itemIdNum);
+        setItem(data);
+        setTags(data.tags || "");
+        setNotes(data.notes || "");
+        // 标记为已读并记录进度
+        if (!data.is_read) {
+          await api.updateFeedItem(feedIdNum, itemIdNum, { is_read: true });
+          addProgress();
+        }
+        // 检查是否在稍后阅读列表（使用 is_starred 字段）
+        setIsReadLater(data.is_starred);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "加载失败");
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [feedIdNum, itemIdNum]);
+
+  const handleSummarize = useCallback(async () => {
+    if (!item) return;
+    setAiLoading(true);
+    setAiAction("summarize");
+    try {
+      const result = await api.summarizeItem(itemIdNum);
+      setItem({ ...item, ai_summary: result.summary });
+    } catch (e) {
+      alert("生成摘要失败，请稍后重试");
+    } finally {
+      setAiLoading(false);
+      setAiAction(null);
+    }
+  }, [item, itemIdNum]);
+
+  const handleTranslate = useCallback(async () => {
+    if (!item) return;
+    setAiLoading(true);
+    setAiAction("translate");
+    try {
+      const result = await api.translateItem(itemIdNum);
+      setItem({ ...item, ai_translated: result.translation });
+    } catch (e) {
+      alert("翻译失败，请稍后重试");
+    } finally {
+      setAiLoading(false);
+      setAiAction(null);
+    }
+  }, [item, itemIdNum]);
+
+  const loadSimilarItems = useCallback(async () => {
+    try {
+      const result = await api.getSimilarItems(itemIdNum);
+      setSimilarItems(result.results);
+    } catch (e) {
+      console.error("获取相关推荐失败", e);
+    }
+  }, [itemIdNum]);
+
+  const handleAddToKnowledge = useCallback(async () => {
+    if (!item) return;
+    try {
+      await api.addToKnowledge(itemIdNum);
+      alert("已添加到知识库");
+      setShowSimilar(true);
+      loadSimilarItems();
+    } catch (e) {
+      alert("添加到知识库失败");
+    }
+  }, [item, itemIdNum, loadSimilarItems]);
+
+  const handleShowSimilar = useCallback(async () => {
+    if (!showSimilar) {
+      setShowSimilar(true);
+      if (similarItems.length === 0) {
+        loadSimilarItems();
+      }
+    } else {
+      setShowSimilar(false);
+    }
+  }, [showSimilar, similarItems.length, loadSimilarItems]);
+
+  const handleSaveTagsAndNotes = useCallback(async () => {
+    if (!item) return;
+    setSaving(true);
+    try {
+      const updated = await api.updateFeedItem(feedIdNum, itemIdNum, {
+        tags,
+        notes,
+      });
+      setItem(updated);
+      setShowNotes(false);
+      alert("保存成功");
+    } catch (e) {
+      alert("保存失败");
+    } finally {
+      setSaving(false);
+    }
+  }, [item, feedIdNum, itemIdNum, tags, notes]);
+
+  const handleToggleStar = useCallback(async () => {
+    if (!item) return;
+    try {
+      const updated = await api.updateFeedItem(feedIdNum, itemIdNum, {
+        is_starred: !item.is_starred,
+      });
+      setItem(updated);
+    } catch (e) {
+      alert("操作失败");
+    }
+  }, [item, feedIdNum, itemIdNum]);
+
+  const handleExportMarkdown = useCallback(() => {
+    if (!item) return;
+    downloadMarkdown(item);
+  }, [item]);
+
+  const handleCopyMarkdown = useCallback(() => {
+    if (!item) return;
+    const md = exportToMarkdown(item);
+    copyToClipboard(md);
+    alert("已复制到剪贴板");
+  }, [item]);
+
+  const handleShare = useCallback(() => {
+    if (!item) return;
+    const shareData = {
+      title: item.title,
+      text: item.ai_summary || item.content_text?.slice(0, 200) || "",
+      url: item.url || window.location.href,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch(() => {});
+    } else {
+      // Fallback: copy link
+      copyToClipboard(shareData.url);
+      alert("链接已复制到剪贴板");
+    }
+  }, [item]);
+
+  const handleToggleReadLater = useCallback(async () => {
+    if (!item) return;
+    if (isReadLater) {
+      await api.removeReadLater(itemIdNum);
+      setIsReadLater(false);
+    } else {
+      await api.readLater(itemIdNum);
+      setIsReadLater(true);
+    }
+  }, [item, isReadLater, itemIdNum]);
+
   // 键盘快捷键
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -93,163 +250,7 @@ export default function ItemDetailPage({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [item, aiLoading]);
-
-  useEffect(() => {
-    async function load() {
-      try {
-        setError(null);
-        const data = await api.getFeedItem(feedIdNum, itemIdNum);
-        setItem(data);
-        setTags(data.tags || "");
-        setNotes(data.notes || "");
-        // 标记为已读并记录进度
-        if (!data.is_read) {
-          await api.updateFeedItem(feedIdNum, itemIdNum, { is_read: true });
-          addProgress();
-        }
-        // 检查是否在稍后阅读列表（使用 is_starred 字段）
-        setIsReadLater(data.is_starred);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "加载失败");
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [feedIdNum, itemIdNum]);
-
-  async function handleSummarize() {
-    if (!item) return;
-    setAiLoading(true);
-    setAiAction("summarize");
-    try {
-      const result = await api.summarizeItem(itemIdNum);
-      setItem({ ...item, ai_summary: result.summary });
-    } catch (e) {
-      alert("生成摘要失败，请稍后重试");
-    } finally {
-      setAiLoading(false);
-      setAiAction(null);
-    }
-  }
-
-  async function handleTranslate() {
-    if (!item) return;
-    setAiLoading(true);
-    setAiAction("translate");
-    try {
-      const result = await api.translateItem(itemIdNum);
-      setItem({ ...item, ai_translated: result.translation });
-    } catch (e) {
-      alert("翻译失败，请稍后重试");
-    } finally {
-      setAiLoading(false);
-      setAiAction(null);
-    }
-  }
-
-  async function handleAddToKnowledge() {
-    if (!item) return;
-    try {
-      await api.addToKnowledge(itemIdNum);
-      alert("已添加到知识库");
-      setShowSimilar(true);
-      loadSimilarItems();
-    } catch (e) {
-      alert("添加到知识库失败");
-    }
-  }
-
-  async function loadSimilarItems() {
-    try {
-      const result = await api.getSimilarItems(itemIdNum);
-      setSimilarItems(result.results);
-    } catch (e) {
-      console.error("获取相关推荐失败", e);
-    }
-  }
-
-  async function handleShowSimilar() {
-    if (!showSimilar) {
-      setShowSimilar(true);
-      if (similarItems.length === 0) {
-        loadSimilarItems();
-      }
-    } else {
-      setShowSimilar(false);
-    }
-  }
-
-  async function handleSaveTagsAndNotes() {
-    if (!item) return;
-    setSaving(true);
-    try {
-      const updated = await api.updateFeedItem(feedIdNum, itemIdNum, {
-        tags,
-        notes,
-      });
-      setItem(updated);
-      setShowNotes(false);
-      alert("保存成功");
-    } catch (e) {
-      alert("保存失败");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function handleToggleStar() {
-    if (!item) return;
-    try {
-      const updated = await api.updateFeedItem(feedIdNum, itemIdNum, {
-        is_starred: !item.is_starred,
-      });
-      setItem(updated);
-    } catch (e) {
-      alert("操作失败");
-    }
-  }
-
-  function handleExportMarkdown() {
-    if (!item) return;
-    downloadMarkdown(item);
-  }
-
-  function handleCopyMarkdown() {
-    if (!item) return;
-    const md = exportToMarkdown(item);
-    copyToClipboard(md);
-    alert("已复制到剪贴板");
-  }
-
-  function handleShare() {
-    if (!item) return;
-    const shareData = {
-      title: item.title,
-      text: item.ai_summary || item.content_text?.slice(0, 200) || "",
-      url: item.url || window.location.href,
-    };
-
-    if (navigator.share) {
-      navigator.share(shareData).catch(() => {});
-    } else {
-      // Fallback: copy link
-      copyToClipboard(shareData.url);
-      alert("链接已复制到剪贴板");
-    }
-  }
-
-  async function handleToggleReadLater() {
-    if (!item) return;
-    if (isReadLater) {
-      await api.removeReadLater(itemIdNum);
-      setIsReadLater(false);
-    } else {
-      await api.readLater(itemIdNum);
-      setIsReadLater(true);
-    }
-  }
+  }, [aiLoading, handleSummarize, handleTranslate, handleToggleStar]);
 
   if (loading) {
     return (
@@ -479,10 +480,13 @@ export default function ItemDetailPage({
         )}
 
         {item.image_url && (
-          <img
+          <Image
             src={item.image_url}
             alt=""
+            width={1200}
+            height={400}
             className="w-full max-h-96 object-cover rounded-lg mb-6"
+            unoptimized
           />
         )}
 

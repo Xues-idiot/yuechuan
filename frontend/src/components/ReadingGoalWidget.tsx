@@ -55,21 +55,6 @@ export default function ReadingGoalWidget() {
   const [tempGoals, setTempGoals] = useState(goals);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem(GOAL_STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setGoals(parsed);
-        setTempGoals(parsed);
-      } catch {
-        // ignore invalid JSON
-      }
-    }
-    loadProgress();
-  }, []);
-
   const loadProgress = useCallback(async () => {
     try {
       const stats = await api.getReadingStats();
@@ -84,6 +69,21 @@ export default function ReadingGoalWidget() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    setMounted(true);
+    const saved = localStorage.getItem(GOAL_STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setGoals(parsed);
+        setTempGoals(parsed);
+      } catch {
+        // ignore invalid JSON
+      }
+    }
+    loadProgress();
+  }, [loadProgress]);
 
   const saveGoals = useCallback(() => {
     setGoals(tempGoals);

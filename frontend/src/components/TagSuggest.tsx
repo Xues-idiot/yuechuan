@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface TagSuggestProps {
   content: string;
@@ -27,6 +27,10 @@ const PATTERN_TAGS: Record<string, string> = {
 export default function TagSuggest({ content, existingTags = [], onSuggest }: TagSuggestProps) {
   const [suggested, setSuggested] = useState<string[]>([]);
 
+  const handleSuggest = useCallback((tags: string[]) => {
+    onSuggest?.(tags);
+  }, [onSuggest]);
+
   useEffect(() => {
     if (!content) return;
 
@@ -49,8 +53,8 @@ export default function TagSuggest({ content, existingTags = [], onSuggest }: Ta
 
     const suggestions = Array.from(found).slice(0, 5);
     setSuggested(suggestions);
-    onSuggest?.(suggestions);
-  }, [content, existingTags]);
+    handleSuggest(suggestions);
+  }, [content, existingTags, handleSuggest]);
 
   if (suggested.length === 0) return null;
 

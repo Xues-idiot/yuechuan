@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use, useCallback, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { api, Feed, FeedItem, ApiError } from "@/lib/api";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -281,10 +282,13 @@ export default function FeedDetailPage({ params }: { params: Promise<{ id: strin
                     />
                   )}
                   {item.image_url && (
-                    <img
+                    <Image
                       src={item.image_url}
                       alt=""
+                      width={80}
+                      height={80}
                       className="w-20 h-20 object-cover rounded"
+                      unoptimized
                     />
                   )}
                   <div className="flex-1 min-w-0">

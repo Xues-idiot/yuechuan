@@ -13,10 +13,19 @@ export default function SettingsGroup({
 }: SettingsGroupProps) {
   return (
     <div className={`space-y-4 ${className}`}>
-      <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+      <h3
+        className="text-sm font-medium uppercase tracking-wide"
+        style={{ color: 'var(--text-tertiary)' }}
+      >
         {title}
       </h3>
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
+      <div
+        className="rounded-[var(--radius-md)] border divide-y"
+        style={{
+          backgroundColor: 'var(--surface-primary)',
+          borderColor: 'var(--border-default)',
+        }}
+      >
         {children}
       </div>
     </div>
@@ -40,14 +49,30 @@ export function SettingsItem({
 }: SettingsItemProps) {
   return (
     <div
-      className={`flex items-center gap-4 p-4 ${onClick ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700" : ""}`}
+      className={`flex items-center gap-4 p-4 transition-colors ${
+        onClick ? "cursor-pointer" : ""
+      }`}
       onClick={onClick}
+      onMouseEnter={(e) => {
+        if (onClick) {
+          e.currentTarget.style.backgroundColor = 'var(--surface-secondary)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (onClick) {
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }
+      }}
     >
       {icon && <span className="text-xl">{icon}</span>}
       <div className="flex-1 min-w-0">
-        <div className="font-medium">{title}</div>
+        <div className="font-medium" style={{ color: 'var(--text-primary)' }}>
+          {title}
+        </div>
         {description && (
-          <div className="text-sm text-gray-500">{description}</div>
+          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            {description}
+          </div>
         )}
       </div>
       {children}

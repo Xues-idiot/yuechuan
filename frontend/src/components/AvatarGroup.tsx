@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 interface AvatarGroupProps {
   avatars: Array<{
     src?: string;
@@ -15,9 +17,9 @@ export default function AvatarGroup({ avatars, max = 4, size = "md" }: AvatarGro
   const remaining = avatars.length - max;
 
   const sizes = {
-    sm: "w-6 h-6 text-xs",
-    md: "w-8 h-8 text-sm",
-    lg: "w-10 h-10 text-base",
+    sm: { width: 24, height: 24, className: "w-6 h-6 text-xs" },
+    md: { width: 32, height: 32, className: "w-8 h-8 text-sm" },
+    lg: { width: 40, height: 40, className: "w-10 h-10 text-base" },
   };
 
   return (
@@ -25,16 +27,19 @@ export default function AvatarGroup({ avatars, max = 4, size = "md" }: AvatarGro
       {displayed.map((avatar, index) => (
         <div
           key={index}
-          className={`${sizes[size]} rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium border-2 border-white dark:border-gray-800 ${
+          className={`${sizes[size].className} rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium border-2 border-white dark:border-gray-800 ${
             index > 0 ? "-ml-2" : ""
           }`}
           style={{ zIndex: displayed.length - index }}
         >
           {avatar.src ? (
-            <img
+            <Image
               src={avatar.src}
               alt={avatar.alt || avatar.name || ""}
+              width={sizes[size].width}
+              height={sizes[size].height}
               className="w-full h-full rounded-full object-cover"
+              unoptimized
             />
           ) : (
             (avatar.name || avatar.alt || "?").charAt(0).toUpperCase()
@@ -44,7 +49,7 @@ export default function AvatarGroup({ avatars, max = 4, size = "md" }: AvatarGro
 
       {remaining > 0 && (
         <div
-          className={`${sizes[size]} rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 font-medium border-2 border-white dark:border-gray-800 -ml-2`}
+          className={`${sizes[size].className} rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 font-medium border-2 border-white dark:border-gray-800 -ml-2`}
           style={{ zIndex: 0 }}
         >
           +{remaining}

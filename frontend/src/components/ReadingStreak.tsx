@@ -43,11 +43,6 @@ export default function ReadingStreak() {
   const [mounted, setMounted] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<number | null>(null);
 
-  useEffect(() => {
-    setMounted(true);
-    loadStreak();
-  }, []);
-
   const loadStreak = useCallback(async () => {
     try {
       const data = await api.getStreak();
@@ -58,6 +53,11 @@ export default function ReadingStreak() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    setMounted(true);
+    loadStreak();
+  }, [loadStreak]);
 
   const weekDays = useMemo(() => ["一", "二", "三", "四", "五", "六", "日"], []);
 

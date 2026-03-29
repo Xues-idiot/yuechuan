@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Modal from "./Modal";
 
 interface ImagePreviewProps {
@@ -14,19 +15,25 @@ export default function ImagePreview({ src, alt = "", className = "" }: ImagePre
 
   return (
     <>
-      <img
+      <Image
         src={src}
         alt={alt}
+        width={800}
+        height={600}
         onClick={() => setIsOpen(true)}
         className={`cursor-zoom-in ${className}`}
+        unoptimized
       />
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="lg">
         <div className="flex items-center justify-center">
-          <img
+          <Image
             src={src}
             alt={alt}
+            width={1200}
+            height={900}
             className="max-w-full max-h-[80vh] object-contain"
+            unoptimized
           />
         </div>
       </Modal>

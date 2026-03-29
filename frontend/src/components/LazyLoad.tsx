@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 
 interface LazyImageProps {
   src: string;
@@ -47,11 +48,13 @@ export default function LazyImage({
         </div>
       )}
       {inView && (
-        <img
+        <Image
           src={src}
           alt={alt}
+          fill
           onLoad={() => setLoaded(true)}
           className={`${loaded ? "opacity-100" : "opacity-0"} transition-opacity`}
+          unoptimized
         />
       )}
     </div>

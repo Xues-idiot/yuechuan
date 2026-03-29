@@ -8,6 +8,9 @@ interface SearchBarProps {
   className?: string;
   placeholder?: string;
   autoFocus?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
+  onFocus?: () => void;
   onSearch?: (query: string) => void;
 }
 
@@ -15,12 +18,23 @@ export default function SearchBar({
   className = "",
   placeholder = "搜索内容...",
   autoFocus = false,
+  value: externalValue,
+  onChange: externalOnChange,
+  onFocus,
   onSearch,
 }: SearchBarProps) {
-  const [query, setQuery] = useState("");
+  const [internalValue, setInternalValue] = useState("");
   const [focused, setFocused] = useState(false);
   const [showShortcut, setShowShortcut] = useState(true);
   const router = useRouter();
+
+  // Support both controlled and uncontrolled modes
+  const value = externalValue !== undefined ? externalValue : internalValue;
+  const setValue = externalOnChange || setInternalValue;
+
+  const handleClear = useCallback(() => {
+    setValue("");
+  }, [setValue]);
 
   // Listen for Cmd/Ctrl+K to focus search
   useEffect(() => {
@@ -38,25 +52,21 @@ export default function SearchBar({
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [focused]);
+  }, [focused, handleClear]);
 
   // Hide shortcut hint when user starts typing
   useEffect(() => {
-    if (query) setShowShortcut(false);
+    if (value) setShowShortcut(false);
     else setShowShortcut(true);
-  }, [query]);
+  }, [value]);
 
   const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      onSearch?.(query.trim());
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    if (value.trim()) {
+      onSearch?.(value.trim());
+      router.push(`/search?q=${encodeURIComponent(value.trim())}`);
     }
-  }, [query, onSearch, router]);
-
-  function handleClear() {
-    setQuery("");
-  }
+  }, [value, onSearch, router]);
 
   return (
     <form onSubmit={handleSearch} className={`relative ${className}`}>
@@ -75,16 +85,21 @@ export default function SearchBar({
         }}
       >
         <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => setFocused(true)}
+          type="search"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onFocus={() => {
+            setFocused(true);
+            onFocus?.();
+          }}
           onBlur={() => setFocused(false)}
           placeholder={placeholder}
           autoFocus={autoFocus}
           className="w-full h-11 px-4 py-2 pl-11 rounded-xl transition-colors bg-transparent"
           style={{ color: 'var(--text-primary)' }}
-          aria-label="搜索"
+          role="searchbox"
+          aria-label={placeholder}
+          autoComplete="off"
         />
         {/* Keyboard shortcut hint */}
         {showShortcut && !focused && (
@@ -105,7 +120,7 @@ export default function SearchBar({
           style={{ color: focused ? 'var(--color-primary)' : 'var(--text-tertiary)' }}
           aria-hidden="true"
         />
-        {query && (
+        {value && (
           <button
             type="button"
             onClick={handleClear}
