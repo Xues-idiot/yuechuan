@@ -757,3 +757,35 @@ a:hover {
   background: var(--surface-glass);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* ===== 粒子爆发动画 ===== */
+@keyframes particle {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0) translateY(-20px);
+  }
+}
+
+.animate-particle {
+  animation: particle 0.6s ease-out forwards;
+}
+
+/* ===== 缩放入场动画 ===== */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}

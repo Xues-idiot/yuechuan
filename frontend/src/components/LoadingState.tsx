@@ -19,10 +19,16 @@ export default function LoadingState({
     if (skeleton) return <>{skeleton}</>;
 
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12" role="status" aria-label="加载中">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-gray-500">{loadingText}</span>
+          <div
+            className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
+            style={{
+              borderColor: 'var(--color-primary)',
+              borderTopColor: 'transparent'
+            }}
+          />
+          <span style={{ color: 'var(--text-secondary)' }}>{loadingText}</span>
         </div>
       </div>
     );

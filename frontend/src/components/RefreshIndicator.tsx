@@ -1,5 +1,7 @@
 "use client";
 
+import { RefreshCw } from "lucide-react";
+
 interface RefreshIndicatorProps {
   isRefreshing: boolean;
   lastRefreshedAt?: string;
@@ -27,19 +29,27 @@ export default function RefreshIndicator({
   return (
     <div className="flex items-center gap-2">
       {isRefreshing ? (
-        <span className="text-sm text-blue-500 animate-pulse">🔄 刷新中...</span>
+        <span
+          className="text-sm animate-pulse flex items-center gap-1.5"
+          style={{ color: 'var(--color-primary)' }}
+        >
+          <RefreshCw className="w-4 h-4 spin" aria-hidden="true" />
+          刷新中...
+        </span>
       ) : (
         <>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
             最后更新: {formatTime(lastRefreshedAt)}
           </span>
           {onRefresh && (
             <button
               onClick={onRefresh}
-              className="p-1 text-gray-400 hover:text-gray-600"
+              className="p-1 rounded hover:bg-[var(--surface-secondary)] transition-colors"
+              style={{ color: 'var(--text-tertiary)' }}
               title="手动刷新"
+              aria-label="手动刷新"
             >
-              🔄
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
             </button>
           )}
         </>

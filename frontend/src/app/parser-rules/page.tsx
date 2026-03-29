@@ -22,6 +22,7 @@ export default function ParserRulesPage() {
 
   useEffect(() => {
     loadPresets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadPresets = async () => {

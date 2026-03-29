@@ -22,6 +22,7 @@ export default function ReadingTimelinePage() {
 
   useEffect(() => {
     loadTimeline();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadTimeline = async () => {

@@ -26,6 +26,7 @@ export default function SharePage() {
 
   useEffect(() => {
     loadPlatforms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadPlatforms = async () => {

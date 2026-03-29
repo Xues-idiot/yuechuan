@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Trophy, Lock, Sparkles, RefreshCw, TrendingUp, Calendar } from "lucide-react";
 
 interface Achievement {
   id: string;
@@ -22,6 +23,7 @@ export default function AchievementsPage() {
 
   useEffect(() => {
     loadAchievements();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadAchievements = async () => {
@@ -65,54 +67,72 @@ export default function AchievementsPage() {
   };
 
   return (
-    <main className="min-h-screen p-8">
+    <main className="min-h-screen p-8" style={{ backgroundColor: 'var(--background)' }}>
       <div className="max-w-4xl mx-auto">
         <header className="mb-8">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">🏆 成就</h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                完成任务，解锁成就
-              </p>
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--text-inverse)' }}>
+                <Trophy className="w-7 h-7" aria-hidden="true" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold mb-1" style={{ fontFamily: 'var(--font-serif)', color: 'var(--text-primary)' }}>成就</h1>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  完成任务，解锁成就
+                </p>
+              </div>
             </div>
             <button
               onClick={loadAchievements}
-              className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+              className="btn btn-secondary gap-2"
             >
-              🔄 刷新
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
+              刷新
             </button>
           </div>
         </header>
 
-        {/* Stats */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 text-center">
-            <div className="text-3xl font-bold text-yellow-500">{unlockedCount}</div>
-            <div className="text-sm text-gray-500">已解锁</div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 text-center">
-            <div className="text-3xl font-bold text-gray-400">{achievements.length - unlockedCount}</div>
-            <div className="text-sm text-gray-500">未解锁</div>
-          </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 text-center">
-            <div className="text-3xl font-bold text-blue-500">
-              {achievements.length > 0 ? Math.round((unlockedCount / achievements.length) * 100) : 0}%
+          <div className="card-elevated p-5 text-center border relative overflow-hidden" style={{ borderColor: 'var(--color-accent)' }}>
+            <div className="absolute inset-0 opacity-5" style={{ background: 'linear-gradient(135deg, var(--color-accent), transparent)' }} />
+            <div className="relative">
+              <div className="text-4xl font-bold mb-1" style={{ color: 'var(--color-accent)' }}>{unlockedCount}</div>
+              <div className="text-sm flex items-center justify-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+                <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                已解锁
+              </div>
             </div>
-            <div className="text-sm text-gray-500">完成率</div>
+          </div>
+          <div className="card p-5 text-center">
+            <div className="relative">
+              <div className="text-4xl font-bold mb-1" style={{ color: 'var(--text-tertiary)' }}>{achievements.length - unlockedCount}</div>
+              <div className="text-sm flex items-center justify-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+                <Lock className="w-3.5 h-3.5" aria-hidden="true" />
+                未解锁
+              </div>
+            </div>
+          </div>
+          <div className="card p-5 text-center">
+            <div className="relative">
+              <div className="text-4xl font-bold mb-1" style={{ color: 'var(--color-primary)' }}>
+                {achievements.length > 0 ? Math.round((unlockedCount / achievements.length) * 100) : 0}%
+              </div>
+              <div className="text-sm flex items-center justify-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+                <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" />
+                完成率
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Filter */}
         <div className="flex gap-2 mb-6">
-          {(["all", "unlocked", "locked"] as const).map((f) => (
+          {(["all", "unlocked", "locked"] as const).map((f, index) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-sm ${
-                filter === f
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-              }`}
+              className={`btn ${filter === f ? 'btn-primary' : 'btn-secondary'}`}
             >
               {f === "all" ? "全部" : f === "unlocked" ? "已解锁" : "进行中"}
             </button>
@@ -123,39 +143,59 @@ export default function AchievementsPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {loading ? (
             [...Array(6)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse"></div>
+              <div key={i} className="h-36 skeleton rounded-xl"></div>
             ))
           ) : (
-            filteredAchievements.map((achievement) => (
+            filteredAchievements.map((achievement, index) => (
               <div
                 key={achievement.id}
-                className={`p-4 rounded-lg border transition-colors ${
+                className={`p-5 rounded-xl border transition-all duration-300 hover:scale-[1.02] spring-in ${
                   achievement.unlocked
-                    ? "bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-200 dark:border-yellow-800"
-                    : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                    ? 'card-elevated'
+                    : 'card'
                 }`}
+                style={{
+                  backgroundColor: achievement.unlocked ? 'var(--surface-elevated)' : 'var(--surface-primary)',
+                  borderColor: achievement.unlocked ? 'var(--color-accent)' : 'var(--border-default)',
+                  backdropFilter: achievement.unlocked ? 'blur(12px)' : 'none',
+                  animationDelay: `${index * 75}ms`,
+                }}
               >
-                <div className="text-4xl mb-2">{achievement.icon}</div>
-                <div className={`font-semibold ${achievement.unlocked ? "text-yellow-700 dark:text-yellow-400" : ""}`}>
+                <div className="flex items-start justify-between mb-3">
+                  <div className={`text-4xl transition-transform duration-300 ${achievement.unlocked ? '' : 'grayscale opacity-50'}`}>
+                    {achievement.icon}
+                  </div>
+                  {achievement.unlocked && (
+                    <div className="p-1.5 rounded-full" style={{ backgroundColor: 'var(--color-accent)15' }}>
+                      <Trophy className="w-4 h-4" style={{ color: 'var(--color-accent)' }} aria-hidden="true" />
+                    </div>
+                  )}
+                </div>
+                <div className="font-semibold mb-0.5" style={{ color: achievement.unlocked ? 'var(--color-accent)' : 'var(--text-primary)' }}>
                   {achievement.name}
                 </div>
-                <div className="text-xs text-gray-500 mt-1 mb-2">{achievement.description}</div>
+                <div className="text-xs mb-3" style={{ color: 'var(--text-tertiary)' }}>{achievement.description}</div>
 
                 {achievement.unlocked ? (
-                  <div className="text-xs text-green-600 dark:text-green-400">
-                    ✓ 已解锁 {formatDate(achievement.unlocked_at)}
+                  <div className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--color-success)' }}>
+                    <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
+                    已解锁 {formatDate(achievement.unlocked_at)}
                   </div>
                 ) : (
                   <>
-                    <div className="flex items-center gap-2 mt-2">
-                      <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-default)' }}>
                         <div
-                          className="h-full bg-blue-500 rounded-full transition-all"
-                          style={{ width: `${Math.min((achievement.progress / achievement.target) * 100, 100)}%` }}
+                          className="h-full rounded-full transition-all duration-500 progress-fill"
+                          style={{
+                            width: `${Math.min((achievement.progress / achievement.target) * 100, 100)}%`,
+                            backgroundColor: 'var(--color-primary)'
+                          }}
                         />
                       </div>
                     </div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="flex items-center gap-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>
+                      <Calendar className="w-3 h-3" aria-hidden="true" />
                       {achievement.progress} / {achievement.target}
                     </div>
                   </>
@@ -165,13 +205,25 @@ export default function AchievementsPage() {
           )}
         </div>
 
-        {/* Tips */}
-        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-          <h3 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">💡 成就提示</h3>
-          <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-            <li>• 保持每日阅读习惯，解锁连续阅读成就</li>
-            <li>• 使用AI功能可以获得AI用户成就</li>
-            <li>• 收藏和分享文章可以解锁更多成就</li>
+        {/* Tips Card */}
+        <div className="mt-6 p-5 rounded-xl border" style={{ backgroundColor: 'var(--color-primary-light)', borderColor: 'var(--color-primary)' }}>
+          <h3 className="font-semibold mb-2 flex items-center gap-2" style={{ color: 'var(--color-primary)' }}>
+            <Sparkles className="w-4 h-4" aria-hidden="true" />
+            成就提示
+          </h3>
+          <ul className="text-sm space-y-1.5" style={{ color: 'var(--text-secondary)' }}>
+            <li className="flex items-center gap-2">
+              <span style={{ color: 'var(--color-accent)' }}>•</span>
+              保持每日阅读习惯，解锁连续阅读成就
+            </li>
+            <li className="flex items-center gap-2">
+              <span style={{ color: 'var(--color-accent)' }}>•</span>
+              使用AI功能可以获得AI用户成就
+            </li>
+            <li className="flex items-center gap-2">
+              <span style={{ color: 'var(--color-accent)' }}>•</span>
+              收藏和分享文章可以解锁更多成就
+            </li>
           </ul>
         </div>
       </div>

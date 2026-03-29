@@ -34,6 +34,7 @@ export default function KeyboardShortcutsPage() {
 
   useEffect(() => {
     loadShortcuts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadShortcuts = async () => {

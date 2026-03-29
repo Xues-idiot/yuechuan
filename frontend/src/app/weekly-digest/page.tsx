@@ -21,6 +21,7 @@ export default function WeeklyDigestPage() {
 
   useEffect(() => {
     loadDigest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadDigest = async () => {

@@ -31,6 +31,7 @@ export default function BatchOperationsPage() {
   useEffect(() => {
     loadFeeds();
     loadItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadFeeds = async () => {

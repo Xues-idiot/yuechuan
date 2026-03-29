@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 
 interface NotificationPrefs {
   enabled: boolean;
+  soundEnabled: boolean;
   newContent: boolean;
   reviewReminder: boolean;
   goalAchieved: boolean;
@@ -19,6 +21,7 @@ const PREFS_KEY = "notification_prefs";
 export default function NotificationSettingsPage() {
   const [prefs, setPrefs] = useState<NotificationPrefs>({
     enabled: true,
+    soundEnabled: true,
     newContent: true,
     reviewReminder: true,
     goalAchieved: true,
@@ -87,33 +90,48 @@ export default function NotificationSettingsPage() {
   }
 
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-2xl mx-auto">
+    <main className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+      <div className="max-w-2xl mx-auto px-6 py-8">
         <header className="mb-8 flex items-start justify-between">
           <div>
             <Link
               href="/settings"
-              className="text-sm text-gray-500 hover:text-blue-500 mb-2 block"
+              className="inline-flex items-center gap-1 text-sm mb-3 transition-colors"
+              style={{ color: 'var(--text-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-primary)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
             >
-              ← 返回设置
+              <ChevronRight className="w-4 h-4 rotate-180" />
+              返回设置
             </Link>
-            <h1 className="text-2xl font-bold">通知设置</h1>
+            <h1 className="text-2xl font-serif font-bold" style={{ color: 'var(--text-primary)' }}>
+              通知设置
+            </h1>
           </div>
           <ThemeToggle />
         </header>
 
         {/* 通知权限 */}
-        <section className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold mb-4">🔔 通知权限</h2>
+        <section
+          className="mb-6 p-6 rounded-[var(--radius-lg)] border"
+          style={{
+            backgroundColor: 'var(--surface-primary)',
+            borderColor: 'var(--border-default)',
+            boxShadow: 'var(--shadow-card)',
+          }}
+        >
+          <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
+            通知权限
+          </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium">浏览器通知</p>
-                <p className="text-sm text-gray-500">
+                <p className="font-medium" style={{ color: 'var(--text-primary)' }}>浏览器通知</p>
+                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
                   状态:{" "}
                   {typeof Notification !== "undefined"
                     ? Notification.permission === "granted"
-                      ? "已授权 ✓"
+                      ? "已授权"
                       : Notification.permission === "denied"
                       ? "已拒绝"
                       : "未授权"
@@ -124,7 +142,13 @@ export default function NotificationSettingsPage() {
                 Notification.permission !== "granted" && (
                   <button
                     onClick={handleRequestPermission}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="px-4 py-2 rounded-[var(--radius-sm)] font-medium transition-colors"
+                    style={{
+                      backgroundColor: 'var(--color-primary)',
+                      color: 'white',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary-hover)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary)'}
                   >
                     授权通知
                   </button>
@@ -135,7 +159,19 @@ export default function NotificationSettingsPage() {
                 <button
                   onClick={handleTestNotification}
                   disabled={testing}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 rounded-[var(--radius-sm)] border transition-colors"
+                  style={{
+                    borderColor: 'var(--border-default)',
+                    color: 'var(--text-secondary)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--surface-secondary)';
+                    e.currentTarget.style.borderColor = 'var(--border-hover)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor = 'var(--border-default)';
+                  }}
                 >
                   {testing ? "发送中..." : "发送测试通知"}
                 </button>
@@ -144,13 +180,26 @@ export default function NotificationSettingsPage() {
         </section>
 
         {/* 通知类型 */}
-        <section className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold mb-4">📋 通知类型</h2>
+        <section
+          className="mb-6 p-6 rounded-[var(--radius-lg)] border"
+          style={{
+            backgroundColor: 'var(--surface-primary)',
+            borderColor: 'var(--border-default)',
+            boxShadow: 'var(--shadow-card)',
+          }}
+        >
+          <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
+            通知类型
+          </h2>
           <div className="space-y-4">
-            <label className="flex items-center justify-between cursor-pointer">
+            <label className="flex items-center justify-between cursor-pointer p-3 rounded-[var(--radius-md)] transition-colors"
+              style={{ backgroundColor: 'var(--surface-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--border-default)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-secondary)'}
+            >
               <div>
-                <p className="font-medium">新内容通知</p>
-                <p className="text-sm text-gray-500">订阅源更新时通知</p>
+                <p className="font-medium" style={{ color: 'var(--text-primary)' }}>新内容通知</p>
+                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>订阅源更新时通知</p>
               </div>
               <input
                 type="checkbox"
@@ -159,13 +208,18 @@ export default function NotificationSettingsPage() {
                   setPrefs({ ...prefs, newContent: e.target.checked })
                 }
                 className="w-5 h-5 rounded"
+                style={{ accentColor: 'var(--color-primary)' }}
               />
             </label>
 
-            <label className="flex items-center justify-between cursor-pointer">
+            <label className="flex items-center justify-between cursor-pointer p-3 rounded-[var(--radius-md)] transition-colors"
+              style={{ backgroundColor: 'var(--surface-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--border-default)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-secondary)'}
+            >
               <div>
-                <p className="font-medium">复习提醒</p>
-                <p className="text-sm text-gray-500">间隔复习到期时通知</p>
+                <p className="font-medium" style={{ color: 'var(--text-primary)' }}>复习提醒</p>
+                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>间隔复习到期时通知</p>
               </div>
               <input
                 type="checkbox"
@@ -174,13 +228,18 @@ export default function NotificationSettingsPage() {
                   setPrefs({ ...prefs, reviewReminder: e.target.checked })
                 }
                 className="w-5 h-5 rounded"
+                style={{ accentColor: 'var(--color-primary)' }}
               />
             </label>
 
-            <label className="flex items-center justify-between cursor-pointer">
+            <label className="flex items-center justify-between cursor-pointer p-3 rounded-[var(--radius-md)] transition-colors"
+              style={{ backgroundColor: 'var(--surface-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--border-default)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-secondary)'}
+            >
               <div>
-                <p className="font-medium">目标达成</p>
-                <p className="text-sm text-gray-500">阅读目标完成时通知</p>
+                <p className="font-medium" style={{ color: 'var(--text-primary)' }}>目标达成</p>
+                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>阅读目标完成时通知</p>
               </div>
               <input
                 type="checkbox"
@@ -189,19 +248,53 @@ export default function NotificationSettingsPage() {
                   setPrefs({ ...prefs, goalAchieved: e.target.checked })
                 }
                 className="w-5 h-5 rounded"
+                style={{ accentColor: 'var(--color-primary)' }}
+              />
+            </label>
+
+            <label className="flex items-center justify-between cursor-pointer p-3 rounded-[var(--radius-md)] transition-colors"
+              style={{ backgroundColor: 'var(--surface-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--border-default)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-secondary)'}
+            >
+              <div>
+                <p className="font-medium" style={{ color: 'var(--text-primary)' }}>通知声音</p>
+                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>收到通知时播放提示音</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={prefs.soundEnabled}
+                onChange={(e) =>
+                  setPrefs({ ...prefs, soundEnabled: e.target.checked })
+                }
+                className="w-5 h-5 rounded"
+                style={{ accentColor: 'var(--color-primary)' }}
               />
             </label>
           </div>
         </section>
 
         {/* 免打扰时间 */}
-        <section className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold mb-4">🌙 免打扰时间</h2>
+        <section
+          className="mb-6 p-6 rounded-[var(--radius-lg)] border"
+          style={{
+            backgroundColor: 'var(--surface-primary)',
+            borderColor: 'var(--border-default)',
+            boxShadow: 'var(--shadow-card)',
+          }}
+        >
+          <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
+            免打扰时间
+          </h2>
           <div className="space-y-4">
-            <label className="flex items-center justify-between cursor-pointer">
+            <label className="flex items-center justify-between cursor-pointer p-3 rounded-[var(--radius-md)] transition-colors"
+              style={{ backgroundColor: 'var(--surface-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--border-default)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-secondary)'}
+            >
               <div>
-                <p className="font-medium">启用免打扰</p>
-                <p className="text-sm text-gray-500">在指定时间段内静音</p>
+                <p className="font-medium" style={{ color: 'var(--text-primary)' }}>启用免打扰</p>
+                <p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>在指定时间段内静音</p>
               </div>
               <input
                 type="checkbox"
@@ -210,31 +303,34 @@ export default function NotificationSettingsPage() {
                   setPrefs({ ...prefs, quietHoursEnabled: e.target.checked })
                 }
                 className="w-5 h-5 rounded"
+                style={{ accentColor: 'var(--color-primary)' }}
               />
             </label>
 
             {prefs.quietHoursEnabled && (
               <div className="flex items-center gap-4">
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">开始时间</label>
+                  <label className="block text-sm mb-1" style={{ color: 'var(--text-tertiary)' }}>开始时间</label>
                   <input
                     type="time"
                     value={prefs.quietHoursStart}
                     onChange={(e) =>
                       setPrefs({ ...prefs, quietHoursStart: e.target.value })
                     }
-                    className="px-3 py-2 border rounded-lg dark:bg-gray-700"
+                    className="input"
+                    style={{ width: '120px' }}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-500 mb-1">结束时间</label>
+                  <label className="block text-sm mb-1" style={{ color: 'var(--text-tertiary)' }}>结束时间</label>
                   <input
                     type="time"
                     value={prefs.quietHoursEnd}
                     onChange={(e) =>
                       setPrefs({ ...prefs, quietHoursEnd: e.target.value })
                     }
-                    className="px-3 py-2 border rounded-lg dark:bg-gray-700"
+                    className="input"
+                    style={{ width: '120px' }}
                   />
                 </div>
               </div>
@@ -244,9 +340,19 @@ export default function NotificationSettingsPage() {
 
         <button
           onClick={handleSave}
-          className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="w-full py-3 rounded-[var(--radius-md)] font-medium transition-colors"
+          style={{
+            backgroundColor: saved ? 'var(--color-success)' : 'var(--color-primary)',
+            color: 'white',
+          }}
+          onMouseEnter={(e) => {
+            if (!saved) e.currentTarget.style.backgroundColor = 'var(--color-primary-hover)';
+          }}
+          onMouseLeave={(e) => {
+            if (!saved) e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+          }}
         >
-          {saved ? "✓ 已保存" : "保存设置"}
+          {saved ? "已保存" : "保存设置"}
         </button>
       </div>
     </main>

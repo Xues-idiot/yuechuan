@@ -20,6 +20,7 @@ export default function StreakPage() {
 
   useEffect(() => {
     loadStreakData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadStreakData = () => {
@@ -140,12 +141,12 @@ export default function StreakPage() {
   };
 
   const getIntensity = (count: number, goal: number) => {
-    if (count === 0) return "bg-gray-100 dark:bg-gray-800";
+    if (count === 0) return { bg: 'var(--surface-secondary)', text: 'var(--text-tertiary)' };
     const ratio = count / goal;
-    if (ratio >= 1) return "bg-green-500";
-    if (ratio >= 0.5) return "bg-green-400";
-    if (ratio >= 0.25) return "bg-green-300";
-    return "bg-green-200";
+    if (ratio >= 1) return { bg: 'var(--color-success)', text: 'white' };
+    if (ratio >= 0.5) return { bg: 'rgba(16, 185, 129, 0.7)', text: 'white' };
+    if (ratio >= 0.25) return { bg: 'rgba(16, 185, 129, 0.5)', text: 'white' };
+    return { bg: 'rgba(16, 185, 129, 0.3)', text: 'var(--text-primary)' };
   };
 
   if (loading) {
@@ -167,22 +168,22 @@ export default function StreakPage() {
   }
 
   return (
-    <main className="min-h-screen p-8">
+    <main className="min-h-screen p-8" style={{ backgroundColor: 'var(--background)' }}>
       <div className="max-w-2xl mx-auto">
         <header className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <Link href="/features" className="text-sm text-gray-500 hover:text-blue-500 mb-2 block">
+              <Link href="/features" className="text-sm mb-2 block transition-colors hover:text-[var(--color-primary)]" style={{ color: 'var(--text-tertiary)' }}>
                 ← 返回功能页
               </Link>
-              <h1 className="text-4xl font-bold mb-2">📅 阅读打卡</h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <h1 className="text-4xl font-bold mb-2" style={{ fontFamily: 'var(--font-serif)', color: 'var(--text-primary)' }}>📅 阅读打卡</h1>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 保持每日阅读习惯，连续打卡追踪
               </p>
             </div>
             <button
               onClick={handleMarkRead}
-              className="px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-colors shadow-lg hover:shadow-xl"
+              className="btn btn-primary shadow-lg hover:shadow-xl"
             >
               📖 标记已读
             </button>
@@ -191,59 +192,62 @@ export default function StreakPage() {
 
         {/* 庆祝动画 */}
         {celebrating && (
-          <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-50">
+          <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-[var(--z-toast)]">
             <div className="text-8xl animate-bounce">🎉</div>
           </div>
         )}
 
         {/* 统计卡片 */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-orange-400 to-red-500 text-white rounded-xl p-6 text-center shadow-lg">
+          <div className="rounded-xl p-6 text-center shadow-lg" style={{ background: 'linear-gradient(135deg, var(--color-accent), var(--color-error))', color: 'var(--text-inverse)' }}>
             <div className="text-5xl font-bold mb-1">{streakData?.current_streak}</div>
             <div className="text-sm opacity-90">当前连续</div>
             <div className="text-xs mt-1 opacity-70">天</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center border border-gray-200 dark:border-gray-700">
-            <div className="text-3xl font-bold text-yellow-500">{streakData?.longest_streak}</div>
-            <div className="text-sm text-gray-500">最长连续</div>
-            <div className="text-xs text-gray-400 mt-1">天</div>
+          <div className="card-elevated rounded-xl p-6 text-center border" style={{ borderColor: 'var(--border-default)', backdropFilter: 'blur(12px)' }}>
+            <div className="text-3xl font-bold" style={{ color: 'var(--color-accent)' }}>{streakData?.longest_streak}</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>最长连续</div>
+            <div className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>天</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center border border-gray-200 dark:border-gray-700">
-            <div className="text-3xl font-bold text-blue-500">{streakData?.total_days}</div>
-            <div className="text-sm text-gray-500">总打卡</div>
-            <div className="text-xs text-gray-400 mt-1">天</div>
+          <div className="card-elevated rounded-xl p-6 text-center border" style={{ borderColor: 'var(--border-default)', backdropFilter: 'blur(12px)' }}>
+            <div className="text-3xl font-bold" style={{ color: 'var(--color-primary)' }}>{streakData?.total_days}</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>总打卡</div>
+            <div className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>天</div>
           </div>
         </div>
 
         {/* 今日进度 */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
+        <div className="card rounded-xl p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-lg">今日进度</h2>
-            <span className={`px-3 py-1 rounded-full text-sm ${(streakData?.today_read || 0) >= (streakData?.today_goal || 0) ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : "bg-gray-100 text-gray-600 dark:bg-gray-700"}`}>
+            <h2 className="font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>今日进度</h2>
+            <span className={`px-3 py-1 rounded-full text-sm ${(streakData?.today_read || 0) >= (streakData?.today_goal || 0) ? 'badge-success' : 'badge'}`}>
               {streakData?.today_read} / {streakData?.today_goal} 篇
             </span>
           </div>
-          <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+          <div className="h-4 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-default)' }}>
             <div
-              className={`h-full rounded-full transition-all duration-500 ${(streakData?.today_read || 0) >= (streakData?.today_goal || 0) ? "bg-green-500" : "bg-blue-500"}`}
-              style={{ width: `${Math.min(((streakData?.today_read || 0) / (streakData?.today_goal || 10)) * 100, 100)}%` }}
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${Math.min(((streakData?.today_read || 0) / (streakData?.today_goal || 10)) * 100, 100)}%`,
+                backgroundColor: (streakData?.today_read || 0) >= (streakData?.today_goal || 0) ? 'var(--color-success)' : 'var(--color-primary)'
+              }}
             />
           </div>
           {(streakData?.today_read || 0) >= (streakData?.today_goal || 0) && (
-            <p className="text-center text-green-500 mt-2 font-medium">🎉 今日目标已达成！</p>
+            <p className="text-center mt-2 font-medium" style={{ color: 'var(--color-success)' }}>🎉 今日目标已达成！</p>
           )}
         </div>
 
         {/* 热力图日历 */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="font-semibold text-lg mb-4">阅读日历</h2>
+        <div className="card rounded-xl p-6 mb-6">
+          <h2 className="font-semibold text-lg mb-4" style={{ color: 'var(--text-primary)' }}>阅读日历</h2>
           <div className="grid grid-cols-7 gap-2">
             {/* 星期标签 */}
-            <div className="text-center text-xs text-gray-400 mb-2">
+            <div className="text-center text-xs mb-2" style={{ color: 'var(--text-tertiary)' }}>
               <div>日</div>
             </div>
             {[1, 2, 3, 4, 5, 6].map(d => (
-              <div key={d} className="text-center text-xs text-gray-400 mb-2">
+              <div key={d} className="text-center text-xs mb-2" style={{ color: 'var(--text-tertiary)' }}>
                 <div>{["一", "二", "三", "四", "五", "六"][d - 1]}</div>
               </div>
             ))}

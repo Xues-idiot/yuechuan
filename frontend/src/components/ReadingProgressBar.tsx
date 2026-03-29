@@ -40,10 +40,21 @@ export default function ReadingProgressBar({ target }: ReadingProgressBarProps) 
   }, [target]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200 dark:bg-gray-700">
+    <div
+      className="fixed top-0 left-0 right-0 z-[var(--z-fixed)] h-1 transition-all duration-150"
+      style={{ backgroundColor: 'var(--border-default)' }}
+      role="progressbar"
+      aria-valuenow={Math.round(progress)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label="阅读进度"
+    >
       <div
-        className="h-full bg-blue-500 transition-all duration-150"
-        style={{ width: `${progress}%` }}
+        className="h-full transition-all duration-150"
+        style={{
+          width: `${progress}%`,
+          backgroundColor: 'var(--color-primary)'
+        }}
       />
     </div>
   );

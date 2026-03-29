@@ -45,6 +45,7 @@ export default function RemindersPage() {
 
   useEffect(() => {
     loadReminders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadReminders = async () => {

@@ -31,12 +31,14 @@ export default function TagsPage() {
 
   useEffect(() => {
     loadTags();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (selectedTag) {
       loadTagItems(selectedTag);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTag]);
 
   const loadTags = async () => {

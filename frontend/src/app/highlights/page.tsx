@@ -40,6 +40,7 @@ export default function HighlightsPage() {
 
   useEffect(() => {
     loadHighlights();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadHighlights = async () => {

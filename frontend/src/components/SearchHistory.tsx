@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { X, History } from "lucide-react";
 import Button from "./Button";
 
 interface SearchHistoryProps {
@@ -65,7 +66,10 @@ export default function SearchHistory({ onSelect, onClear }: SearchHistoryProps)
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-500">搜索历史</span>
+        <span className="text-sm font-medium flex items-center gap-1.5" style={{ color: 'var(--text-secondary)' }}>
+          <History className="w-4 h-4" aria-hidden="true" />
+          搜索历史
+        </span>
         <Button variant="ghost" size="sm" onClick={clearAllHistory}>
           清除
         </Button>
@@ -75,19 +79,26 @@ export default function SearchHistory({ onSelect, onClear }: SearchHistoryProps)
         {history.map((query) => (
           <div
             key={query}
-            className="group inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 rounded-full text-sm"
+            className="group inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm"
+            style={{
+              backgroundColor: 'var(--surface-secondary)',
+              color: 'var(--text-secondary)'
+            }}
           >
             <button
               onClick={() => onSelect(query)}
-              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+              className="hover:underline"
+              style={{ color: 'var(--text-primary)' }}
             >
               {query}
             </button>
             <button
               onClick={() => removeFromHistory(query)}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="p-0.5 rounded hover:bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"
+              style={{ color: 'var(--text-tertiary)' }}
+              aria-label={`移除 ${query}`}
             >
-              ✕
+              <X className="w-3 h-3" aria-hidden="true" />
             </button>
           </div>
         ))}

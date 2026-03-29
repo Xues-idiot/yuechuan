@@ -23,6 +23,7 @@ export default function RecommendationsPage() {
 
   useEffect(() => {
     loadRecommendations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadRecommendations = async () => {

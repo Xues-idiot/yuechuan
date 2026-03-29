@@ -20,6 +20,7 @@ export default function ReadingListPage() {
 
   useEffect(() => {
     loadReadingList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadReadingList = async () => {

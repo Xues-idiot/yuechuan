@@ -30,6 +30,7 @@ export default function FeedHealthPage() {
 
   useEffect(() => {
     loadHealthData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadHealthData = async () => {
