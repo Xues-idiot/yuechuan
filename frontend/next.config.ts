@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  // Fix workspace root detection
+  outputFileTracingRoot: __dirname,
+
   // Performance optimizations
   compress: true,
 
